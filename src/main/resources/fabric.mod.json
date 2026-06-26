@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "template",
+  "id": "ctm",
   "version": "${version}",
 
-  "name": "Template",
-  "description": "",
+  "name": "CTM",
+  "description": "Allows resource packs to add connected textures, emissive rendering, and much more.",
   "authors": [
-    "DanyGames2014"
+    "tterrag", "Drullkus", "minecreatr", "Ralf2oo2"
   ],
 
-  "license": "MIT",
-  "icon": "assets/template/icon.png",
+  "license": "GPLv2",
+  "icon": "assets/ctm/icon.png",
 
   "environment": "*",
   "entrypoints": {
@@ -22,7 +22,7 @@
     ]
   },
   "mixins": [
-    "template.mixins.json"
+    "ctm.mixins.json"
   ],
 
   "depends": {

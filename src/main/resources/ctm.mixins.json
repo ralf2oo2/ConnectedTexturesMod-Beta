@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.danygames2014.template.mixin",
+  "package": "team.chisel.ctm.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],
