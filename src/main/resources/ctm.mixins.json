@@ -4,10 +4,13 @@
   "package": "team.chisel.ctm.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "WeightedBakedModelEntryAccessor"
   ],
   "server": [
   ],
   "client": [
+    "BakedQuadAccessor",
+    "WeightedBakedModelAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
