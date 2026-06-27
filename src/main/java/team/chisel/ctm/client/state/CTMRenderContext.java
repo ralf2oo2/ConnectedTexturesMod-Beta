@@ -3,24 +3,26 @@ package team.chisel.ctm.client.state;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.modificationstation.stationapi.api.block.BlockState;
+import net.modificationstation.stationapi.api.world.BlockStateView;
 import team.chisel.ctm.api.util.RenderContextList;
 import team.chisel.ctm.client.model.CTMModelInfo;
+import team.chisel.ctm.client.model.TextureContextMap;
 import team.chisel.ctm.client.model.UnbakedModelCTM;
 
 import javax.annotation.Nullable;
 
 public class CTMRenderContext {
     private static final ThreadLocal<CTMRenderContext> CURRENT = ThreadLocal.withInitial(() -> null);
-    private final BlockView world;
+    private final BlockStateView world;
     private final BlockPos pos;
-    private @Nullable RenderContextList ctxCache;
+    public TextureContextMap contextMap = new TextureContextMap();
 
-    private CTMRenderContext(BlockView world, BlockPos pos) {
+    private CTMRenderContext(BlockStateView world, BlockPos pos) {
         this.world = world;
         this.pos = pos;
     }
 
-    public static void set(BlockView world, BlockPos pos) {
+    public static void set(BlockStateView world, BlockPos pos) {
         CURRENT.set(new CTMRenderContext(world, pos));
     }
 
@@ -29,15 +31,16 @@ public class CTMRenderContext {
     }
 
     @Nullable
-    public static RenderContextList getContextList(BlockState state, CTMModelInfo info) {
+    public static TextureContextMap getTextureContextMap(BlockState state, CTMModelInfo info) {
         CTMRenderContext ctx = CURRENT.get();
         if(ctx == null) {
             return null;
         }
 
-        if(ctx.ctxCache == null) {
-            ctx.ctxCache = new RenderContextList(state, info.getTextures(), ctx.world, ctx.pos);
+        if(ctx.contextMap == null) {
+            ctx.contextMap = new TextureContextMap();
         }
-        return ctx.ctxCache;
+        ctx.contextMap.fill(info.getTextures(), state, ctx.world, ctx.pos);
+        return ctx.contextMap;
     }
 }

@@ -24,15 +24,67 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class CTMBakedModel extends ForwardingBakedModel {
-    private static final Cache<BlockMeshCacheKey, List<BakedQuad>> BLOCK_MESH_CACHE = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).maximumSize(5000).build();
+    private static final Cache<BlockMeshCacheKey, CTMBakedModel> BLOCK_MESH_CACHE = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).maximumSize(5000).build();
 
     @NotNull
     protected CTMModelInfo modelInfo;
     protected Sprite sprite;
 
+    private final Map<Direction, ImmutableList<BakedQuad>> cachedQuadsByFace = new EnumMap<>(Direction.class);
+
     public CTMBakedModel(@NotNull final BakedModel parent, @NotNull final CTMModelInfo modelInfo) {
         this.wrapped = Objects.requireNonNull(parent, "parent is marked non-null but is null");
         this.modelInfo = Objects.requireNonNull(modelInfo, "modelInfo is marked non-null but is null");
+        sprite = initSprite();
+    }
+
+    private CTMBakedModel(BakedModel parent, CTMModelInfo modelInfo, BlockState blockState, @Nullable TextureContextMap contextMap, Random rand) {
+        this(parent, modelInfo);
+
+        List<Direction> directions = new ArrayList<>(Arrays.asList(Direction.values()));
+        directions.add(null);
+
+        for (Direction face : directions) {
+            List<BakedQuad> parentQuads = this.wrapped.getQuads(blockState, face, rand);
+            List<BakedQuad> transformedQuads = new ArrayList<>();
+            Map<BakedQuad, ICTMTexture<?>> textureMap = new LinkedHashMap<>();
+
+            for (BakedQuad q : parentQuads) {
+                Identifier spriteId = ((BakedQuadAccessor) q).getSprite().getContents().getId();
+                ICTMTexture<?> tex = modelInfo.getOverrideTexture(q.getColorIndex(), spriteId);
+                if (tex == null) {
+                    tex = modelInfo.getTexture(spriteId);
+                }
+
+                if (tex != null) {
+                    Sprite spriteReplacement = modelInfo.getOverrideSprite(q.getColorIndex());
+                    if (spriteReplacement != null) {
+                        q = new BakedQuadRetextured(q, spriteReplacement);
+                    }
+                    textureMap.put(q, tex);
+                } else {
+                    transformedQuads.add(q);
+                }
+            }
+
+            int quadGoal = textureMap.values().stream()
+                                   .mapToInt(tex -> tex.getType().getQuadsPerSide())
+                                   .max()
+                                   .orElse(1);
+
+            for (Map.Entry<BakedQuad, ICTMTexture<?>> entry : textureMap.entrySet()) {
+                ICTMTexture<?> texture = entry.getValue();
+                BakedQuad quad = entry.getKey();
+
+                ITextureContext textureContext = contextMap == null ? null : contextMap.getContext(texture);
+
+                transformedQuads.addAll(texture.transformQuad(quad, textureContext, quadGoal));
+            }
+
+            if (face != null) {
+                cachedQuadsByFace.put(face, ImmutableList.copyOf(transformedQuads));
+            }
+        }
     }
 
     public static void invalidateCaches() {
@@ -72,61 +124,27 @@ public class CTMBakedModel extends ForwardingBakedModel {
 
     @Override
     public ImmutableList<BakedQuad> getQuads(BlockState blockState, Direction face, Random rand) {
-        if(blockState == null || face == null) {
+        if (blockState == null) {
             return this.wrapped.getQuads(blockState, face, rand);
         }
 
-        RenderContextList contextList = CTMRenderContext.getContextList(blockState, getModelInfo());
+        if (!this.cachedQuadsByFace.isEmpty() && face != null) {
+            return this.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
+        }
 
-        if(contextList == null) {
+        TextureContextMap contextMap = CTMRenderContext.getTextureContextMap(blockState, getModelInfo());
+        if (contextMap == null) {
             return this.wrapped.getQuads(blockState, face, rand);
         }
 
         try {
-            BlockMeshCacheKey key = new BlockMeshCacheKey(this.wrapped, blockState, contextList.toDataArray());
+            BlockMeshCacheKey key = new BlockMeshCacheKey(this.wrapped, blockState, contextMap.toDataArray());
 
-            return BLOCK_MESH_CACHE.get(key, () -> {
-                List<BakedQuad> parentQuads = this.wrapped.getQuads(blockState, face, rand);
-                List<BakedQuad> transformedQuads = new ArrayList<>();
+            CTMBakedModel processedModel = BLOCK_MESH_CACHE.get(key,
+                    () -> new CTMBakedModel(this.wrapped, this.modelInfo, blockState, contextMap, rand)
+            );
 
-                Map<BakedQuad, ICTMTexture<?>> textureMap = new LinkedHashMap<>();
-
-                for (BakedQuad q : parentQuads) {
-                    Identifier spriteId = ((BakedQuadAccessor)q).getSprite().getContents().getId();
-
-                    ICTMTexture<?> tex = getModelInfo().getOverrideTexture(q.getColorIndex(), spriteId);
-                    if (tex == null) {
-                        tex = getModelInfo().getTexture(spriteId);
-                    }
-
-                    if (tex != null) {
-                        Sprite spriteReplacement = getModelInfo().getOverrideSprite(q.getColorIndex());
-                        if (spriteReplacement != null) {
-                            q = new BakedQuadRetextured(q, spriteReplacement);
-                        }
-                        textureMap.put(q, tex);
-                    } else {
-                        transformedQuads.add(q);
-                    }
-                }
-
-                int quadGoal = textureMap.values().stream()
-                                       .mapToInt(tex -> tex.getType().getQuadsPerSide())
-                                       .max()
-                                       .orElse(1);
-
-                for (Map.Entry<BakedQuad, ICTMTexture<?>> entry : textureMap.entrySet()) {
-                    ICTMTexture<?> texture = entry.getValue();
-                    BakedQuad quad = entry.getKey();
-
-                    ITextureContext textureContext = contextList.getRenderContext(texture);
-
-
-                    transformedQuads.addAll(texture.transformQuad(quad, textureContext, quadGoal));
-                }
-
-                return ImmutableList.copyOf(transformedQuads);
-            });
+            return processedModel.getQuads(blockState, face, rand);
 
         } catch (ExecutionException e) {
             return this.wrapped.getQuads(blockState, face, rand);
