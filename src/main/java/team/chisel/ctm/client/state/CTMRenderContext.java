@@ -4,6 +4,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.modificationstation.stationapi.api.block.BlockState;
 import team.chisel.ctm.api.util.RenderContextList;
+import team.chisel.ctm.client.model.CTMModelInfo;
 import team.chisel.ctm.client.model.UnbakedModelCTM;
 
 import javax.annotation.Nullable;
@@ -28,14 +29,14 @@ public class CTMRenderContext {
     }
 
     @Nullable
-    public static RenderContextList getContextList(BlockState state, UnbakedModelCTM model) {
+    public static RenderContextList getContextList(BlockState state, CTMModelInfo info) {
         CTMRenderContext ctx = CURRENT.get();
         if(ctx == null) {
             return null;
         }
 
         if(ctx.ctxCache == null) {
-            ctx.ctxCache = new RenderContextList(state, model.getCTMTextures(), ctx.world, ctx.pos);
+            ctx.ctxCache = new RenderContextList(state, info.getTextures(), ctx.world, ctx.pos);
         }
         return ctx.ctxCache;
     }

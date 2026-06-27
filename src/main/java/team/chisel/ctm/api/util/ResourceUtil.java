@@ -6,6 +6,9 @@ import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.resource.Resource;
 import net.modificationstation.stationapi.api.resource.ResourceHelper;
 import net.modificationstation.stationapi.api.util.Identifier;
+import team.chisel.ctm.CTM;
+import team.chisel.ctm.client.resource.CTMMetadataReader;
+import team.chisel.ctm.client.resource.CTMMetadataSection;
 import team.chisel.ctm.client.texture.IMetadataSectionCTM;
 
 import javax.annotation.Nullable;
@@ -13,62 +16,61 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ResourceUtil {
+    private static final Map<Identifier, CTMMetadataSection> METADATA_CACHE = new HashMap<>();
 
-    public static Resource getResource(Sprite sprite) throws IOException {
-        // TODO: figure out how to get this working
-        // TODO: in this class I replaced sprite.getName() with sprite.getAtlasId(), this might be wrong
-        return getResource(spriteToAbsolute(sprite.getAtlasId()));
+    public static Optional<Resource> getResource(Identifier identifier) throws IOException {
+        return ReloadableAssetsManager.INSTANCE.getResource(identifier);
     }
 
-    public static Identifier spriteToAbsolute(Identifier sprite) {
-        if (!sprite.getPath().startsWith("textures/")) {
-            sprite = Identifier.of(sprite.getNamespace(), "textures/" + sprite.getPath());
-        }
-        if (!sprite.getPath().endsWith(".png")) {
-            sprite = Identifier.of(sprite.getNamespace(), sprite.getPath() + ".png");
-        }
-        return sprite;
+    public static Optional<Resource> getResource(Sprite sprite) throws IOException {
+        return getResource(toTextureIdentifier(sprite.getContents().getId()));
     }
 
-    public static Resource getResource(Identifier res) throws IOException {
-        return ReloadableAssetsManager.INSTANCE.getResource(res);
-    }
-
-    public static Resource getResourceUnsafe(Identifier res) {
+    public static Optional<Resource> getResourceUnsafe(Identifier identifier) {
         try {
-            return getResource(res);
+            return getResource(identifier);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static final Map<Identifier, IMetadataSectionCTM> metadataCache = new HashMap<>();
-    private static final IMetadataSectionCTM.Serializer SERIALIZER = new IMetadataSectionCTM.Serializer();
+    @Nullable
+    public static CTMMetadataSection getMetadata(Identifier identifier) throws IOException {
+        if (METADATA_CACHE.containsKey(identifier)) {
+            return METADATA_CACHE.get(identifier);
+        }
+        CTMMetadataSection metadata = null;
+        Optional<Resource> resource = getResource(identifier);
+        if(resource.isPresent()) {
+            Optional<CTMMetadataSection> metadataOpt = resource.get().getMetadata().decode(CTMMetadataReader.INSTANCE);
+            if(metadataOpt.isPresent()) {
+                metadata = metadataOpt.get();
+            }
+        }
 
-    public static @Nullable IMetadataSectionCTM getMetadata(Identifier res) throws IOException {
-        // Note, semantically different from computeIfAbsent, as we DO care about keys mapped to null values
-        if (metadataCache.containsKey(res)) {
-            return metadataCache.get(res);
-        }
-        IMetadataSectionCTM ret;
-        try (Resource resource = getResource(res)) {
-            ret = resource.getMetadata().decode(SERIALIZER).orElse(null);
-        } catch (FileNotFoundException e) {
-            ret = null;
-        } catch (JsonParseException e) {
-            throw new IOException("Error loading metadata for location " + res, e);
-        }
-        metadataCache.put(res, ret);
-        return ret;
+        METADATA_CACHE.put(identifier, metadata);
+        return metadata;
     }
 
-    public static @Nullable IMetadataSectionCTM getMetadata(Sprite sprite) throws IOException {
-        return getMetadata(spriteToAbsolute(sprite.getAtlasId()));
+    @Nullable
+    public static CTMMetadataSection getMetadata(Sprite sprite) throws IOException {
+        return getMetadata(toTextureIdentifier(sprite.getContents().getId()));
     }
 
-    public static @Nullable IMetadataSectionCTM getMetadataUnsafe(Sprite sprite) {
+    @Nullable
+    public static CTMMetadataSection getMetadataUnsafe(Identifier identifier) {
+        try {
+            return getMetadata(identifier);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Nullable
+    public static CTMMetadataSection getMetadataUnsafe(Sprite sprite) {
         try {
             return getMetadata(sprite);
         } catch (IOException e) {
@@ -76,7 +78,42 @@ public class ResourceUtil {
         }
     }
 
+    @Nullable
+    public static CTMMetadataSection getMetadataSafe(Identifier identifier) {
+        try {
+            return getMetadata(identifier);
+        } catch (FileNotFoundException e) {
+            //
+        } catch (Exception e) {
+            CTM.LOGGER.error("Error loading metadata for resource " + identifier + ".", e);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static CTMMetadataSection getMetadataSafe(Sprite sprite) {
+        try {
+            return getMetadata(sprite);
+        } catch (FileNotFoundException e) {
+            // For virtual sprites, such as missingno
+        } catch (Exception e) {
+            CTM.LOGGER.error("Error loading metadata for sprite " + sprite.getContents().getId() + ".", e);
+        }
+        return null;
+    }
+
+    public static Identifier toTextureIdentifier(Identifier identifier) {
+        String path = identifier.getPath();
+        if (!path.startsWith("textures/")) {
+            path = "textures/" + path;
+        }
+        if (!path.endsWith(".png")) {
+            path = path + ".png";
+        }
+        return path.equals(identifier.getPath()) ? identifier : Identifier.of(identifier.getNamespace(), path);
+    }
+
     public static void invalidateCaches() {
-        metadataCache.clear();
+        METADATA_CACHE.clear();
     }
 }
