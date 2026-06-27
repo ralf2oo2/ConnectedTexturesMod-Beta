@@ -22,6 +22,7 @@ import net.modificationstation.stationapi.api.util.math.Direction;
 import org.lwjgl.util.vector.Vector3f;
 import team.chisel.ctm.api.model.IUnbakedModelCTM;
 import team.chisel.ctm.api.texture.ICTMTexture;
+import team.chisel.ctm.api.util.RenderContextList;
 import team.chisel.ctm.client.util.BlockRenderLayer;
 import team.chisel.ctm.mixin.WeightedBakedModelAccessor;
 
