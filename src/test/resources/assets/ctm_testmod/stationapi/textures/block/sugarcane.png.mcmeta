@@ -1,0 +1,13 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "ctmv",
+    "textures": [
+      "ctm_testmod:block/sugarcane_ctmv"
+    ],
+    "extra": {
+      "ignore_states": true,
+      "connect_inside": true
+    }
+  }
+}

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import team.chisel.ctm.api.event.ModelsAddedEvent;
 import team.chisel.ctm.api.event.TextureTypeRegisterEvent;
 import team.chisel.ctm.client.texture.type.TextureTypeCTM;
+import team.chisel.ctm.client.texture.type.TextureTypeCTMV;
 
 public class CTM {
     @Entrypoint.Namespace
@@ -26,5 +27,8 @@ public class CTM {
     @EventListener
     public void registerTextureTypes(TextureTypeRegisterEvent event) {
         event.register("ctm", new TextureTypeCTM());
+
+        event.register("ctmv", new TextureTypeCTMV());
+        event.register("pillar", new TextureTypeCTMV());
     }
 }
