@@ -1,6 +1,8 @@
 package team.chisel.ctm;
 
 import net.mine_diver.unsafeevents.listener.EventListener;
+import net.modificationstation.stationapi.api.StationAPI;
+import net.modificationstation.stationapi.api.event.mod.InitEvent;
 import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
 import net.modificationstation.stationapi.api.util.Namespace;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +16,11 @@ public class CTM {
 
     @Entrypoint.Logger
     public static Logger LOGGER;
+
+    @EventListener
+    public void onInit(InitEvent event) {
+        StationAPI.EVENT_BUS.post(new TextureTypeRegisterEvent());
+    }
 
 
     @EventListener

@@ -16,11 +16,6 @@ public class TextureTypeRegistry {
 
     private static final Map<String, ITextureType> map = Maps.newHashMap();
 
-    public TextureTypeRegistry() {
-        TextureTypeRegisterEvent event = new TextureTypeRegisterEvent();
-        StationAPI.EVENT_BUS.post(event);
-    }
-
     public static void register(String name, ITextureType type){
         String key = name.toLowerCase(Locale.ROOT);
         if (map.containsKey(key) && map.get(key) != type){

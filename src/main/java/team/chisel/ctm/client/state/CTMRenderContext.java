@@ -1,13 +1,10 @@
 package team.chisel.ctm.client.state;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.world.BlockStateView;
-import team.chisel.ctm.api.util.RenderContextList;
 import team.chisel.ctm.client.model.CTMModelInfo;
 import team.chisel.ctm.client.model.TextureContextMap;
-import team.chisel.ctm.client.model.UnbakedModelCTM;
 
 import javax.annotation.Nullable;
 

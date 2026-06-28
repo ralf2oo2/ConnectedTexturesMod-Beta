@@ -1,14 +1,20 @@
 package team.chisel.ctm.client.util;
 
+import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
+import net.modificationstation.stationapi.api.client.render.model.ItemModelGenerator;
+import net.modificationstation.stationapi.api.client.render.model.ModelLoader;
 import net.modificationstation.stationapi.api.client.render.model.UnbakedModel;
 import net.modificationstation.stationapi.api.client.render.model.json.JsonUnbakedModel;
+import net.modificationstation.stationapi.api.client.render.model.json.ModelElement;
+import net.modificationstation.stationapi.api.client.render.model.json.ModelElementFace;
 import net.modificationstation.stationapi.api.client.render.model.json.ModelOverride;
+import net.modificationstation.stationapi.api.client.texture.MissingSprite;
 import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.client.texture.SpriteIdentifier;
 import net.modificationstation.stationapi.api.client.texture.atlas.Atlases;
 import net.modificationstation.stationapi.api.util.Identifier;
-import org.apache.commons.lang3.tuple.Pair;
 import team.chisel.ctm.CTM;
 import team.chisel.ctm.api.texture.ICTMTexture;
 import team.chisel.ctm.api.util.ResourceUtil;
@@ -19,8 +25,15 @@ import team.chisel.ctm.mixin.JsonUnbakedModelAccessor;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class TextureUtil {
+
+    public static Map<Identifier, ICTMTexture<?>> initializeTextures(Set<SpriteIdentifier> textureDependencies, Function<SpriteIdentifier, Sprite> spriteGetter) {
+        Map<Identifier, ICTMTexture<?>> textures = new HashMap<>();
+        initializeTextures(textureDependencies, textures, spriteGetter);
+        return textures;
+    }
 
     public static void initializeTextures(Set<SpriteIdentifier> textureDependencies, Map<Identifier, ICTMTexture<?>> textures, Function<SpriteIdentifier, Sprite> spriteGetter) {
         for (SpriteIdentifier identifier : textureDependencies) {
@@ -79,34 +92,62 @@ public class TextureUtil {
             Function<Identifier, UnbakedModel> unbakedModelGetter,
             Set<Pair<String, String>> unresolvedTextureReferences
     ) {
-        Set<SpriteIdentifier> dependencies = new HashSet<>();
-        gatherDependencies(model, unbakedModelGetter, unresolvedTextureReferences, dependencies, new HashSet<>());
+        Set<JsonUnbakedModel> set = Sets.newLinkedHashSet();
+
+        JsonUnbakedModel current = model;
+        JsonUnbakedModelAccessor currentAccessor = (JsonUnbakedModelAccessor)(Object) current;
+
+        while (currentAccessor.getParentId() != null && currentAccessor.getParent() == null) {
+            set.add(current);
+
+            UnbakedModel unbakedModel = unbakedModelGetter.apply(currentAccessor.getParentId());
+            if (unbakedModel == null) {
+                CTM.LOGGER.warn("No parent '{}' while loading model '{}'", currentAccessor.getParentId(), current);
+            }
+
+            if (unbakedModel instanceof JsonUnbakedModel && set.contains((JsonUnbakedModel) unbakedModel)) {
+                CTM.LOGGER.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}",
+                        current, set.stream().map(Object::toString).collect(Collectors.joining(" -> ")), currentAccessor.getParentId());
+                unbakedModel = null;
+            }
+
+            if (unbakedModel == null) {
+                unbakedModel = unbakedModelGetter.apply(ModelLoader.MISSING_ID.id);
+            }
+
+            if (!(unbakedModel instanceof JsonUnbakedModel)) {
+                throw new IllegalStateException("BlockModel parent has to be a block model.");
+            }
+
+            current = (JsonUnbakedModel) unbakedModel;
+            currentAccessor = (JsonUnbakedModelAccessor)(Object) current;
+        }
+
+        Set<SpriteIdentifier> dependencies = Sets.newHashSet(model.resolveSprite("particle"));
+
+        for (ModelElement modelElement : model.getElements()) {
+            for (ModelElementFace modelElementFace : modelElement.faces.values()) {
+                SpriteIdentifier spriteIdentifier = model.resolveSprite(modelElementFace.textureId);
+
+                if (Objects.equals(spriteIdentifier.texture, MissingSprite.getMissingSpriteId())) {
+                    unresolvedTextureReferences.add(Pair.of(modelElementFace.textureId, model.toString()));
+                }
+
+                dependencies.add(spriteIdentifier);
+            }
+        }
+
+        model.getOverrides().forEach((modelOverride) -> {
+            UnbakedModel overrideModel = unbakedModelGetter.apply(modelOverride.getModelId());
+            if (overrideModel instanceof JsonUnbakedModel && !Objects.equals(overrideModel, model)) {
+                dependencies.addAll(getTextureDependencies((JsonUnbakedModel) overrideModel, unbakedModelGetter, unresolvedTextureReferences));
+            }
+        });
+
+        if (model.getRootModel() == net.modificationstation.stationapi.api.client.render.model.ModelLoader.GENERATION_MARKER) {
+            ItemModelGenerator.LAYERS.forEach((layer) -> dependencies.add(model.resolveSprite(layer)));
+        }
+
         return dependencies;
-    }
-
-    private static void gatherDependencies(JsonUnbakedModel model, Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences, Set<SpriteIdentifier> accumulator, Set<JsonUnbakedModel> visited) {
-        if (model == null || !visited.add(model)) {
-            return;
-        }
-
-        for (Either<SpriteIdentifier, String> either : ((JsonUnbakedModelAccessor)model).getTextureMap().values()) {
-            either.left().ifPresent(accumulator::add);
-        }
-
-        if (((JsonUnbakedModelAccessor)model).getParent() != null) {
-            gatherDependencies(((JsonUnbakedModelAccessor)model).getParent(), unbakedModelGetter, unresolvedTextureReferences, accumulator, visited);
-        } else if (((JsonUnbakedModelAccessor)model).getParentId() != null) {
-            UnbakedModel unbakedParent = unbakedModelGetter.apply(((JsonUnbakedModelAccessor)model).getParentId());
-            if (unbakedParent instanceof JsonUnbakedModel jsonParent) {
-                gatherDependencies(jsonParent, unbakedModelGetter, unresolvedTextureReferences, accumulator, visited);
-            }
-        }
-
-        for (ModelOverride override : model.getOverrides()) {
-            UnbakedModel overrideModel = unbakedModelGetter.apply(override.getModelId());
-            if (overrideModel instanceof JsonUnbakedModel jsonOverride) {
-                gatherDependencies(jsonOverride, unbakedModelGetter, unresolvedTextureReferences, accumulator, visited);
-            }
-        }
     }
 }

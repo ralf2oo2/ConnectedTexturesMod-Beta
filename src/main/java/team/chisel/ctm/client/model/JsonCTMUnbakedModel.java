@@ -21,8 +21,8 @@ import team.chisel.ctm.api.texture.ICTMTexture;
 import team.chisel.ctm.api.util.ResourceUtil;
 import team.chisel.ctm.client.resource.CTMMetadataReader;
 import team.chisel.ctm.client.resource.CTMMetadataSection;
-import team.chisel.ctm.client.texture.IMetadataSectionCTM;
 import team.chisel.ctm.client.util.TextureUtil;
+import team.chisel.ctm.client.util.VoidSet;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -95,7 +95,17 @@ public class JsonCTMUnbakedModel implements UnbakedModel {
 
     @Override
     public @org.jetbrains.annotations.Nullable BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
-        Map<Identifier, ICTMTexture<?>> textures = TextureUtil.initializeTextures(textureDependencies, textureGetter);
+
+        VoidSet<com.mojang.datafixers.util.Pair<String, String>> voidSet = VoidSet.get();
+        Collection<SpriteIdentifier> textureDependencies = TextureUtil.getTextureDependencies(
+                this.parent,
+                baker::getOrLoadModel,
+                voidSet
+        );
+
+        Set<SpriteIdentifier> textureSet = new HashSet<>(textureDependencies);
+
+        Map<Identifier, ICTMTexture<?>> textures = TextureUtil.initializeTextures(textureSet, textureGetter);
 
         Int2ObjectMap<Sprite> spriteOverrides = new Int2ObjectArrayMap<>();
         for (Int2ObjectMap.Entry<SpriteIdentifier> entry : identifierOverrides.int2ObjectEntrySet()) {
