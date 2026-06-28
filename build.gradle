@@ -24,6 +24,20 @@ loom {
     if (project.hasProperty("accesswidener_name") && project.accesswidener_name.length() > 0) {
         accessWidenerPath = file("src/main/resources/${project.accesswidener_name}.accesswidener")
     }
+
+    runs {
+        testClient {
+            inherit client
+            source = sourceSets.test
+            configName = "Test Minecraft Client"
+        }
+        testServer {
+            inherit server
+            source = sourceSets.test
+            configName = "Test Minecraft Server"
+        }
+    }
+
     mixin {
         useLegacyMixinAp = false
     }

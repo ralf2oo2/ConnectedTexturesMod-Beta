@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "ctm_testmod",
+  "version": "${version}",
+
+  "name": "CTM Test Mod",
+  "description": "CTM Test Mod",
+  "authors": [
+    "Pepper_Bell", "Ralf2oo2"
+  ],
+
+  "license": "GPLv2",
+  "icon": "assets/ctm/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "stationapi:event_bus": [
+      "team.chisel.ctm.test.CTMTest"
+    ],
+    "stationapi:event_bus_client": [
+    ],
+    "stationapi:event_bus_server": [
+    ]
+  },
+  "mixins": [
+  ],
+
+  "depends": {
+    "minecraft": "1.0.0-beta.7.3"
+  }
+}
