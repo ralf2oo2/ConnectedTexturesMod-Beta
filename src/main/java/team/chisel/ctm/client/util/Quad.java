@@ -57,7 +57,7 @@ public class Quad {
         private final Vector2f[] data;
 
         private UVs(Vector2f... data) {
-            this(Atlases.getTerrain().getTexture(MissingSprite.getMissingSpriteId()).getSprite(), data);
+            this(Atlases.getTerrain().getTexture(0).getSprite(), data);
         }
 
         private UVs(Sprite sprite, Vector2f... data) {

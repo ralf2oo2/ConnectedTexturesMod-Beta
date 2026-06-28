@@ -7,11 +7,8 @@ import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
 import net.modificationstation.stationapi.api.util.Namespace;
 import org.apache.logging.log4j.Logger;
 import team.chisel.ctm.client.texture.render.TextureMap;
-import team.chisel.ctm.client.texture.type.TextureTypeMap;
+import team.chisel.ctm.client.texture.type.*;
 import team.chisel.ctm.event.TextureTypeRegisterEvent;
-import team.chisel.ctm.client.texture.type.TextureTypeCTM;
-import team.chisel.ctm.client.texture.type.TextureTypeCTMH;
-import team.chisel.ctm.client.texture.type.TextureTypeCTMV;
 
 public class CTM {
     @Entrypoint.Namespace
@@ -41,5 +38,11 @@ public class CTM {
 
         event.register("v", TextureTypeMap.PATTERN);
         event.register("pattern", TextureTypeMap.PATTERN);
+
+        event.register("edges", new TextureTypeEdges());
+
+        event.register("edges_full", new TextureTypeEdgesFull());
+
+        event.register("eldritch", new TextureTypeEldritch());
     }
 }

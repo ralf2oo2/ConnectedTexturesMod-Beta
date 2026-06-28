@@ -28,6 +28,8 @@ public class CTMTest {
     public static Block testBlockCtmh;
     public static Block testBlockRandom;
     public static Block testBlockPattern;
+    public static Block testBlockEdgeFull;
+    public static Block testBlockEldritch;
 
     @EventListener
     public void registerBlocks(BlockRegistryEvent event) {
@@ -36,5 +38,7 @@ public class CTMTest {
         testBlockCtmh = new TemplateBookshelfBlock(NAMESPACE.id("ctmh_bookshelf"), 0);
         testBlockRandom = new TemplateBlock(NAMESPACE.id("random"), Material.WOOD);
         testBlockPattern = new TemplateBlock(NAMESPACE.id("pattern"), Material.WOOD);
+        testBlockEdgeFull = new TemplateBlock(NAMESPACE.id("edge_full_obsidian"), Material.WOOD);
+        testBlockEldritch = new TemplateBlock(NAMESPACE.id("eldritch"), Material.WOOD);
     }
 }
