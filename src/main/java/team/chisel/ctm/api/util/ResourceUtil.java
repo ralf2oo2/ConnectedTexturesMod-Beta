@@ -9,7 +9,6 @@ import net.modificationstation.stationapi.api.util.Identifier;
 import team.chisel.ctm.CTM;
 import team.chisel.ctm.client.resource.CTMMetadataReader;
 import team.chisel.ctm.client.resource.CTMMetadataSection;
-import team.chisel.ctm.client.texture.IMetadataSectionCTM;
 
 import javax.annotation.Nullable;
 import java.io.FileNotFoundException;

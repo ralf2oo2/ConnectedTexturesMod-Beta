@@ -4,6 +4,7 @@ import net.mine_diver.unsafeevents.listener.EventListener;
 import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
 import net.modificationstation.stationapi.api.util.Namespace;
 import org.apache.logging.log4j.Logger;
+import team.chisel.ctm.api.event.ModelsAddedEvent;
 import team.chisel.ctm.api.event.TextureTypeRegisterEvent;
 import team.chisel.ctm.client.texture.type.TextureTypeCTM;
 

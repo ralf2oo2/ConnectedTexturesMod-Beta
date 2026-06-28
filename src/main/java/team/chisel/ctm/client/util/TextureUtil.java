@@ -1,19 +1,23 @@
 package team.chisel.ctm.client.util;
 
+import com.mojang.datafixers.util.Either;
+import net.modificationstation.stationapi.api.client.render.model.UnbakedModel;
+import net.modificationstation.stationapi.api.client.render.model.json.JsonUnbakedModel;
+import net.modificationstation.stationapi.api.client.render.model.json.ModelOverride;
 import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.client.texture.SpriteIdentifier;
 import net.modificationstation.stationapi.api.client.texture.atlas.Atlases;
 import net.modificationstation.stationapi.api.util.Identifier;
+import org.apache.commons.lang3.tuple.Pair;
 import team.chisel.ctm.CTM;
 import team.chisel.ctm.api.texture.ICTMTexture;
 import team.chisel.ctm.api.util.ResourceUtil;
 import team.chisel.ctm.api.util.TextureInfo;
 import team.chisel.ctm.client.resource.CTMMetadataSection;
 import team.chisel.ctm.client.texture.type.TextureTypeNormal;
+import team.chisel.ctm.mixin.JsonUnbakedModelAccessor;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class TextureUtil {
@@ -68,5 +72,41 @@ public class TextureUtil {
 
     public static boolean isTextureReference(String texture) {
         return texture.charAt(0) == '#';
+    }
+
+    public static Collection<SpriteIdentifier> getTextureDependencies(
+            JsonUnbakedModel model,
+            Function<Identifier, UnbakedModel> unbakedModelGetter,
+            Set<Pair<String, String>> unresolvedTextureReferences
+    ) {
+        Set<SpriteIdentifier> dependencies = new HashSet<>();
+        gatherDependencies(model, unbakedModelGetter, unresolvedTextureReferences, dependencies, new HashSet<>());
+        return dependencies;
+    }
+
+    private static void gatherDependencies(JsonUnbakedModel model, Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences, Set<SpriteIdentifier> accumulator, Set<JsonUnbakedModel> visited) {
+        if (model == null || !visited.add(model)) {
+            return;
+        }
+
+        for (Either<SpriteIdentifier, String> either : ((JsonUnbakedModelAccessor)model).getTextureMap().values()) {
+            either.left().ifPresent(accumulator::add);
+        }
+
+        if (((JsonUnbakedModelAccessor)model).getParent() != null) {
+            gatherDependencies(((JsonUnbakedModelAccessor)model).getParent(), unbakedModelGetter, unresolvedTextureReferences, accumulator, visited);
+        } else if (((JsonUnbakedModelAccessor)model).getParentId() != null) {
+            UnbakedModel unbakedParent = unbakedModelGetter.apply(((JsonUnbakedModelAccessor)model).getParentId());
+            if (unbakedParent instanceof JsonUnbakedModel jsonParent) {
+                gatherDependencies(jsonParent, unbakedModelGetter, unresolvedTextureReferences, accumulator, visited);
+            }
+        }
+
+        for (ModelOverride override : model.getOverrides()) {
+            UnbakedModel overrideModel = unbakedModelGetter.apply(override.getModelId());
+            if (overrideModel instanceof JsonUnbakedModel jsonOverride) {
+                gatherDependencies(jsonOverride, unbakedModelGetter, unresolvedTextureReferences, accumulator, visited);
+            }
+        }
     }
 }
