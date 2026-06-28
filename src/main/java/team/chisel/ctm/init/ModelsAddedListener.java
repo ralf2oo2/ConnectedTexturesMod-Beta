@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class ModelsAddedListener {
-    private Map<JsonUnbakedModel, Int2ObjectMap<JsonElement>> jsonOverrideMap;
+    private Map<JsonUnbakedModel, Int2ObjectMap<JsonElement>> jsonOverrideMap = new HashMap<>();
 
     @EventListener
     public void modelsAdded(ModelsAddedEvent event) {

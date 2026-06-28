@@ -133,7 +133,7 @@ public class JsonCTMUnbakedModel implements UnbakedModel {
             }
         }
 
-        return new CTMBakedModel(Objects.requireNonNull(parent.bake(baker, textureGetter, rotationContainer, modelId)), new JsonCTMModelInfo(textures, spriteOverrides, textureOverrides));
+        return new CTMBakedModel(parent.bake(baker, textureGetter, rotationContainer, modelId), new JsonCTMModelInfo(textures, spriteOverrides, textureOverrides));
     }
 
     private static class JsonCTMModelInfo implements CTMModelInfo {

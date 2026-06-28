@@ -101,10 +101,11 @@ public class ResourceUtil {
         return null;
     }
 
+    // TODO: check if minecraft textures can still be retrieved with the stationapi prefix
     public static Identifier toTextureIdentifier(Identifier identifier) {
         String path = identifier.getPath();
-        if (!path.startsWith("textures/")) {
-            path = "textures/" + path;
+        if (!path.startsWith("stationapi/textures/")) {
+            path = "stationapi/textures/" + path;
         }
         if (!path.endsWith(".png")) {
             path = path + ".png";
