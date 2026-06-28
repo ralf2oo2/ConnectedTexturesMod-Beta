@@ -43,7 +43,7 @@ public class Quad {
     }
 
     // TODO: confirm this works
-    private static final Sprite BASE = Atlases.getTerrain().getTexture(MissingSprite.getMissingSpriteId()).getSprite();
+//    private static final Sprite BASE = Atlases.getTerrain().getTexture(MissingSprite.getMissingSpriteId()).getSprite();
 
     @ToString
     public static class UVs {
@@ -57,7 +57,7 @@ public class Quad {
         private final Vector2f[] data;
 
         private UVs(Vector2f... data) {
-            this(BASE, data);
+            this(Atlases.getTerrain().getTexture(MissingSprite.getMissingSpriteId()).getSprite(), data);
         }
 
         private UVs(Sprite sprite, Vector2f... data) {

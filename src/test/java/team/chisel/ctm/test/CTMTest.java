@@ -24,6 +24,6 @@ public class CTMTest {
 
     @EventListener
     public void registerBlocks(BlockRegistryEvent event) {
-        testBlockCtm = new TemplateGlassBlock(NAMESPACE.id("ctm_glass"), 0, Material.GLASS, true);
+        testBlockCtm = new TemplateGlassBlock(NAMESPACE.id("ctm_glass"), 0, Material.GLASS, false);
     }
 }
