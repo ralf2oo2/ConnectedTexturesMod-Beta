@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ctm_testmod:block/glass_ctm"
+      "model": "ctm_testmod:block/ctm_glass"
     }
   }
 }

@@ -3,8 +3,10 @@ package team.chisel.ctm.client.util;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
+import net.modificationstation.stationapi.api.client.StationRenderAPI;
 import net.modificationstation.stationapi.api.client.render.model.ItemModelGenerator;
 import net.modificationstation.stationapi.api.client.render.model.ModelLoader;
+import net.modificationstation.stationapi.api.client.render.model.SpriteAtlasManager;
 import net.modificationstation.stationapi.api.client.render.model.UnbakedModel;
 import net.modificationstation.stationapi.api.client.render.model.json.JsonUnbakedModel;
 import net.modificationstation.stationapi.api.client.render.model.json.ModelElement;
@@ -12,7 +14,9 @@ import net.modificationstation.stationapi.api.client.render.model.json.ModelElem
 import net.modificationstation.stationapi.api.client.render.model.json.ModelOverride;
 import net.modificationstation.stationapi.api.client.texture.MissingSprite;
 import net.modificationstation.stationapi.api.client.texture.Sprite;
+import net.modificationstation.stationapi.api.client.texture.SpriteAtlasTexture;
 import net.modificationstation.stationapi.api.client.texture.SpriteIdentifier;
+import net.modificationstation.stationapi.api.client.texture.atlas.AtlasLoader;
 import net.modificationstation.stationapi.api.client.texture.atlas.Atlases;
 import net.modificationstation.stationapi.api.util.Identifier;
 import team.chisel.ctm.CTM;
@@ -80,7 +84,7 @@ public class TextureUtil {
     }
 
     public static SpriteIdentifier toSpriteIdentifier(Identifier identifier) {
-        return SpriteIdentifier.of(Atlases.getTerrain().id, identifier);
+        return SpriteIdentifier.of(Atlases.GAME_ATLAS_TEXTURE, identifier);
     }
 
     public static boolean isTextureReference(String texture) {

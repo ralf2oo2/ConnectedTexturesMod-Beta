@@ -3,6 +3,7 @@ package team.chisel.ctm.init;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.modificationstation.stationapi.api.client.render.model.ModelLoader;
 import net.modificationstation.stationapi.api.client.render.model.UnbakedModel;
@@ -63,7 +64,10 @@ public class ModelsAddedListener {
                     CTMMetadataSection metadata = ResourceUtil.getMetadataSafe(ResourceUtil.toTextureIdentifier(spriteId.texture));
                     if (metadata != null) {
                         // At least one texture has CTM metadata, so this model should be wrapped
-                        wrappedModels.put(identifier, new CTMUnbakedModel(unbakedModel));
+                        // Only json models are supported atm because there is no way to get texture dependencies of unbaked models
+                        if(unbakedModel instanceof JsonUnbakedModel jsonModel) {
+                            wrappedModels.put(identifier, new JsonCTMUnbakedModel(jsonModel, Int2ObjectMaps.emptyMap()));
+                        }
                         break;
                     }
                 }
