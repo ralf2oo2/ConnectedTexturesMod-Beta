@@ -7,7 +7,7 @@ import com.google.gson.JsonParseException;
 import net.modificationstation.stationapi.api.util.Identifier;
 import team.chisel.ctm.api.texture.ITextureType;
 import team.chisel.ctm.client.texture.type.TextureTypeNormal;
-import team.chisel.ctm.client.texture.type.TextureTypeRegistry;
+import team.chisel.ctm.registry.TextureTypeRegistry;
 import team.chisel.ctm.client.util.BlockRenderLayer;
 
 import javax.annotation.Nullable;

@@ -1,9 +1,8 @@
-package team.chisel.ctm.api.event;
+package team.chisel.ctm.event;
 
 import net.mine_diver.unsafeevents.Event;
-import net.modificationstation.stationapi.api.util.Identifier;
 import team.chisel.ctm.api.texture.ITextureType;
-import team.chisel.ctm.client.texture.type.TextureTypeRegistry;
+import team.chisel.ctm.registry.TextureTypeRegistry;
 
 public class TextureTypeRegisterEvent extends Event {
     public void register(String name, ITextureType textureType) {

@@ -1,9 +1,6 @@
-package team.chisel.ctm.client.texture.type;
+package team.chisel.ctm.registry;
 
 import com.google.common.collect.Maps;
-import net.modificationstation.stationapi.api.StationAPI;
-import net.modificationstation.stationapi.api.util.Identifier;
-import team.chisel.ctm.api.event.TextureTypeRegisterEvent;
 import team.chisel.ctm.api.texture.ITextureType;
 
 import java.util.Locale;

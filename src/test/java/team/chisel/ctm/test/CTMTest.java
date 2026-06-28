@@ -8,6 +8,7 @@ import net.modificationstation.stationapi.api.client.texture.atlas.Atlas;
 import net.modificationstation.stationapi.api.client.texture.atlas.Atlases;
 import net.modificationstation.stationapi.api.event.registry.BlockRegistryEvent;
 import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
+import net.modificationstation.stationapi.api.template.block.TemplateBlock;
 import net.modificationstation.stationapi.api.template.block.TemplateBookshelfBlock;
 import net.modificationstation.stationapi.api.template.block.TemplateGlassBlock;
 import net.modificationstation.stationapi.api.template.block.TemplateSugarCaneBlock;
@@ -23,11 +24,17 @@ public class CTMTest {
     public static Logger LOGGER;
 
     public static Block testBlockCtm;
+    public static Block testBlockCtmv;
+    public static Block testBlockCtmh;
+    public static Block testBlockRandom;
+    public static Block testBlockPattern;
 
     @EventListener
     public void registerBlocks(BlockRegistryEvent event) {
         testBlockCtm = new TemplateGlassBlock(NAMESPACE.id("ctm_glass"), 0, Material.GLASS, false);
-        testBlockCtm = new TemplateSugarCaneBlock(NAMESPACE.id("ctmv_sugarcane"), 0);
-        testBlockCtm = new TemplateBookshelfBlock(NAMESPACE.id("ctmh_bookshelf"), 0);
+        testBlockCtmv = new TemplateSugarCaneBlock(NAMESPACE.id("ctmv_sugarcane"), 0);
+        testBlockCtmh = new TemplateBookshelfBlock(NAMESPACE.id("ctmh_bookshelf"), 0);
+        testBlockRandom = new TemplateBlock(NAMESPACE.id("random"), Material.WOOD);
+        testBlockPattern = new TemplateBlock(NAMESPACE.id("pattern"), Material.WOOD);
     }
 }

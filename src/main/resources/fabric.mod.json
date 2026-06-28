@@ -18,7 +18,7 @@
     ],
     "stationapi:event_bus_client": [
       "team.chisel.ctm.CTM",
-      "team.chisel.ctm.client.texture.type.TextureTypeRegistry",
+      "team.chisel.ctm.registry.TextureTypeRegistry",
       "team.chisel.ctm.init.ModelsAddedListener"
     ],
     "stationapi:event_bus_server": [
