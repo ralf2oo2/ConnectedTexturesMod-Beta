@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import team.chisel.ctm.api.event.ModelsAddedEvent;
 import team.chisel.ctm.api.event.TextureTypeRegisterEvent;
 import team.chisel.ctm.client.texture.type.TextureTypeCTM;
+import team.chisel.ctm.client.texture.type.TextureTypeCTMH;
 import team.chisel.ctm.client.texture.type.TextureTypeCTMV;
 
 public class CTM {
@@ -30,5 +31,8 @@ public class CTM {
 
         event.register("ctmv", new TextureTypeCTMV());
         event.register("pillar", new TextureTypeCTMV());
+
+        event.register("ctmh", new TextureTypeCTMH());
+        event.register("ctm_horizontal", new TextureTypeCTMH());
     }
 }
