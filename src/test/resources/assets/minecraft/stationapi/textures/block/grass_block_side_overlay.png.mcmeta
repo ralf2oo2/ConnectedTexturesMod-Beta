@@ -1,0 +1,14 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "edges_full",
+    "textures": [
+      "minecraft:block/obsidian_edges_full"
+    ],
+    "extra": {
+      "connect_to": [
+        { "block": "grass_block" }
+      ]
+    }
+  }
+}

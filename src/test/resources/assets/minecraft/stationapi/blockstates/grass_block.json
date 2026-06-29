@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "":  { "model": "ctm_testmod:block/grass_normal" }
+  }
+}

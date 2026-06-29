@@ -17,6 +17,6 @@ public class JsonUnbakedModelDeserializerMixin {
     @Inject(method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/modificationstation/stationapi/api/client/render/model/json/JsonUnbakedModel;", at = @At("RETURN"))
     public void onDeserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext, CallbackInfoReturnable<Object> cir) {
         JsonUnbakedModel jsonModel = (JsonUnbakedModel) cir.getReturnValue();
-        StationAPI.EVENT_BUS.post(DeserializeModelJsonEvent.builder().jsonModel(jsonModel).jsonElement(jsonElement).type(type).context(jsonDeserializationContext).build());
+//        StationAPI.EVENT_BUS.post(DeserializeModelJsonEvent.builder().jsonModel(jsonModel).jsonElement(jsonElement).type(type).context(jsonDeserializationContext).build());
     }
 }
