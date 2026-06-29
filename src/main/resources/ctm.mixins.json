@@ -8,12 +8,13 @@
   "server": [
   ],
   "client": [
+    "BakedModelManagerMixin",
     "BakedModelRendererMixin",
     "BakedQuadAccessor",
+    "JsonUnbakedModelAccessor",
     "ModelLoaderMixin",
     "WeightedBakedModelAccessor",
-    "WeightedBakedModelEntryAccessor",
-    "JsonUnbakedModelAccessor"
+    "WeightedBakedModelEntryAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
