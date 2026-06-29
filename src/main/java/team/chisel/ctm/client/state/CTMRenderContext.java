@@ -13,6 +13,7 @@ public class CTMRenderContext {
     private final BlockStateView world;
     private final BlockPos pos;
     public TextureContextMap contextMap = new TextureContextMap();
+    private boolean isFilled = false;
 
     private CTMRenderContext(BlockStateView world, BlockPos pos) {
         this.world = world;
@@ -34,10 +35,14 @@ public class CTMRenderContext {
             return null;
         }
 
-        if(ctx.contextMap == null) {
-            ctx.contextMap = new TextureContextMap();
+        if (!ctx.isFilled) {
+            if(ctx.contextMap == null) {
+                ctx.contextMap = new TextureContextMap();
+            }
+            ctx.contextMap.fill(info.getTextures(), state, ctx.world, ctx.pos);
+            ctx.isFilled = true;
         }
-        ctx.contextMap.fill(info.getTextures(), state, ctx.world, ctx.pos);
+
         return ctx.contextMap;
     }
 }
