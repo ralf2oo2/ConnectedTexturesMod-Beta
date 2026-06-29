@@ -12,6 +12,7 @@
     "BakedModelRendererMixin",
     "BakedQuadAccessor",
     "JsonUnbakedModelAccessor",
+    "JsonUnbakedModelDeserializerMixin",
     "ModelLoaderMixin",
     "WeightedBakedModelAccessor",
     "WeightedBakedModelEntryAccessor"

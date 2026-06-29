@@ -10,6 +10,7 @@ import net.modificationstation.stationapi.api.client.render.model.UnbakedModel;
 import net.modificationstation.stationapi.api.client.render.model.json.JsonUnbakedModel;
 import net.modificationstation.stationapi.api.client.texture.SpriteIdentifier;
 import net.modificationstation.stationapi.api.util.Identifier;
+import team.chisel.ctm.event.DeserializeModelJsonEvent;
 import team.chisel.ctm.event.ModelsAddedEvent;
 import team.chisel.ctm.api.util.ResourceUtil;
 import team.chisel.ctm.client.model.JsonCTMUnbakedModel;
@@ -22,7 +23,6 @@ import java.util.*;
 import java.util.function.Function;
 
 public class ModelsAddedListener {
-    private Map<JsonUnbakedModel, Int2ObjectMap<JsonElement>> jsonOverrideMap = new HashMap<>();
 
     @EventListener
     public void modelsAdded(ModelsAddedEvent event) {
@@ -72,7 +72,7 @@ public class ModelsAddedListener {
                 }
             }
         }
-        jsonOverrideMap.clear();
+        DeserializeModelJsonListener.jsonOverrideMap.clear();
 
         // Inject wrapped models
         for (Map.Entry<Identifier, UnbakedModel> entry : wrappedModels.entrySet()) {
@@ -87,7 +87,7 @@ public class ModelsAddedListener {
     }
 
     private Int2ObjectMap<JsonElement> getOverrides(JsonUnbakedModel unbakedModel) {
-        Int2ObjectMap<JsonElement> overrides = jsonOverrideMap.get(unbakedModel);
+        Int2ObjectMap<JsonElement> overrides = DeserializeModelJsonListener.jsonOverrideMap.get(unbakedModel);
         if (overrides == null) {
             JsonUnbakedModel parent = ((JsonUnbakedModelAccessor)(Object) unbakedModel).getParent();
             if (parent != null) {
