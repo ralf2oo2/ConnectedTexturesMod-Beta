@@ -1,10 +1,8 @@
 package team.chisel.ctm.api.util;
 
-import com.google.gson.JsonParseException;
 import net.modificationstation.stationapi.api.client.resource.ReloadableAssetsManager;
 import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.resource.Resource;
-import net.modificationstation.stationapi.api.resource.ResourceHelper;
 import net.modificationstation.stationapi.api.util.Identifier;
 import team.chisel.ctm.CTM;
 import team.chisel.ctm.client.resource.CTMMetadataReader;

@@ -17,6 +17,14 @@ public class MathUtil {
     public static long getPositionRandom(BlockPos pos) {
         return getCoordinateRandom(pos.x, pos.y, pos.z);
     }
+
+    public static int lerp(float delta, int start, int end) {
+        return (int) (start + delta * (end - start));
+    }
+
+    public static float getLerpProgress(float value, float start, float end) {
+        return (value - start) / (end - start);
+    }
 }
 
 

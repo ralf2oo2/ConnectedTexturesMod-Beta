@@ -11,9 +11,8 @@ import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.util.Identifier;
 import net.modificationstation.stationapi.api.util.math.Direction;
 import org.jetbrains.annotations.NotNull;
-import team.chisel.ctm.api.texture.ICTMTexture;
-import team.chisel.ctm.api.texture.ITextureContext;
-import team.chisel.ctm.api.util.RenderContextList;
+import team.chisel.ctm.api.texture.CTMTexture;
+import team.chisel.ctm.api.texture.TextureContext;
 import team.chisel.ctm.client.state.CTMRenderContext;
 import team.chisel.ctm.client.util.BakedQuadRetextured;
 import team.chisel.ctm.mixin.BakedQuadAccessor;
@@ -48,11 +47,11 @@ public class CTMBakedModel extends ForwardingBakedModel {
         for (Direction face : directions) {
             List<BakedQuad> parentQuads = this.wrapped.getQuads(blockState, face, rand);
             List<BakedQuad> transformedQuads = new ArrayList<>();
-            Map<BakedQuad, ICTMTexture<?>> textureMap = new LinkedHashMap<>();
+            Map<BakedQuad, CTMTexture<?>> textureMap = new LinkedHashMap<>();
 
             for (BakedQuad q : parentQuads) {
                 Identifier spriteId = ((BakedQuadAccessor) q).getSprite().getContents().getId();
-                ICTMTexture<?> tex = modelInfo.getOverrideTexture(q.getColorIndex(), spriteId);
+                CTMTexture<?> tex = modelInfo.getOverrideTexture(q.getColorIndex(), spriteId);
                 if (tex == null) {
                     tex = modelInfo.getTexture(spriteId);
                 }
@@ -68,18 +67,14 @@ public class CTMBakedModel extends ForwardingBakedModel {
                 }
             }
 
-            int quadGoal = textureMap.values().stream()
-                                   .mapToInt(tex -> tex.getType().getQuadsPerSide())
-                                   .max()
-                                   .orElse(1);
 
-            for (Map.Entry<BakedQuad, ICTMTexture<?>> entry : textureMap.entrySet()) {
-                ICTMTexture<?> texture = entry.getValue();
+            for (Map.Entry<BakedQuad, CTMTexture<?>> entry : textureMap.entrySet()) {
+                CTMTexture<?> texture = entry.getValue();
                 BakedQuad quad = entry.getKey();
 
-                ITextureContext textureContext = contextMap == null ? null : contextMap.getContext(texture);
+                TextureContext textureContext = contextMap == null ? null : contextMap.getContext(texture);
 
-                transformedQuads.addAll(texture.transformQuad(quad, textureContext, quadGoal));
+                transformedQuads.addAll(texture.transformQuad(quad, face, textureContext));
             }
 
             if (face != null) {
@@ -105,7 +100,7 @@ public class CTMBakedModel extends ForwardingBakedModel {
     }
 
     protected Sprite initSprite() {
-        ICTMTexture<?> texture = getModelInfo().getTexture(getParent().getSprite().getContents().getId());
+        CTMTexture<?> texture = getModelInfo().getTexture(getParent().getSprite().getContents().getId());
         if (texture != null) {
             return texture.getParticle();
         }

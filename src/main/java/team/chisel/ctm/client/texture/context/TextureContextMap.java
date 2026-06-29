@@ -1,14 +1,14 @@
-package team.chisel.ctm.client.model;
+package team.chisel.ctm.client.texture.context;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import net.minecraft.util.math.BlockPos;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.world.BlockStateView;
+import org.jetbrains.annotations.Nullable;
 import team.chisel.ctm.api.texture.CTMTexture;
 import team.chisel.ctm.api.texture.TextureContext;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

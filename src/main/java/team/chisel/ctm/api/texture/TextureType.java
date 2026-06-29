@@ -1,28 +1,33 @@
 package team.chisel.ctm.api.texture;
 
-import java.lang.annotation.*;
+import team.chisel.ctm.api.util.TextureInfo;
+import team.chisel.ctm.client.texture.type.TextureTypeCTM;
+import team.chisel.ctm.registry.TextureTypeRegistry;
 
 /**
- * Annotation to register an {@link ITextureType}.
- * <p>
- * If applied to a class, the class must have a no-arg constructor.
- * <p>
- * Can also be applied to fields.
- * <p>
- * <strong>Note: This annotation is {@link Repeatable}, so a single texture type can be assigned multiple aliases.</strong>
- * For an example of this, see {@link TextureTypeCTMV}.
+ * Root interface representing a type of CTMTexture. To register, use {@link TextureTypeRegistry}.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.FIELD })
-@Repeatable(TextureTypeList.class)
-public @interface TextureType {
+public interface TextureType extends ContextProvider {
+    /**
+     * Make a CTMTexture using provided information.
+     *
+     * <p>Tip: The return of this method can be explicitly typed without warnings or errors. For instance,
+     * <blockquote>
+     * <code>public CTMTexture{@literal <}MyTextureType{@literal >} makeTexture(...) {...}</code>
+     * </blockquote>
+     * is a valid override of this method.
+     *
+     * @param info A {@link TextureInfo} which contains all the information needed to create a texture.
+     */
+    <T extends TextureType> CTMTexture<? extends T> makeTexture(TextureInfo info);
 
     /**
-     * The name used in JSON files to select this texture type. For example, connected textures would be "ctm"
-     * <p>
-     * This value can be left out to use the name of the class/field being annotated.
+     * The number of textures required for this texture type.
+     * For example, {@link TextureTypeCTM} requires two.
      *
-     * @return The name of the texture type.
+     * @return The number of textures required.
      */
-    String value() default "";
+    default int requiredTextures() {
+        return 1;
+    }
 }

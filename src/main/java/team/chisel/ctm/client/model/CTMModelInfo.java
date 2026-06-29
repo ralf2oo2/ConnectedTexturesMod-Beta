@@ -2,7 +2,7 @@ package team.chisel.ctm.client.model;
 
 import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.util.Identifier;
-import team.chisel.ctm.api.texture.ICTMTexture;
+import team.chisel.ctm.api.texture.CTMTexture;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -13,9 +13,9 @@ public interface CTMModelInfo {
      *
      * @return A collection of all textures this model info contains.
      */
-    Collection<ICTMTexture<?>> getTextures();
+    Collection<CTMTexture<?>> getTextures();
 
-    ICTMTexture<?> getTexture(Identifier identifier);
+    CTMTexture<?> getTexture(Identifier identifier);
 
     @Nullable
     default Sprite getOverrideSprite(int tintIndex) {
@@ -23,7 +23,7 @@ public interface CTMModelInfo {
     }
 
     @Nullable
-    default ICTMTexture<?> getOverrideTexture(int tintIndex, Identifier identifier) {
+    default CTMTexture<?> getOverrideTexture(int tintIndex, Identifier identifier) {
         return null;
     }
 }

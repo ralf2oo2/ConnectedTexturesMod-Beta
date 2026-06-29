@@ -3,38 +3,32 @@ package team.chisel.ctm.client.texture.type;
 import net.minecraft.util.math.BlockPos;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.world.BlockStateView;
-import team.chisel.ctm.api.texture.ICTMTexture;
-import team.chisel.ctm.api.texture.ITextureContext;
-import team.chisel.ctm.api.texture.ITextureType;
+import org.jetbrains.annotations.NotNull;
+import team.chisel.ctm.api.texture.CTMTexture;
+import team.chisel.ctm.api.texture.TextureContext;
 import team.chisel.ctm.api.texture.TextureType;
 import team.chisel.ctm.api.util.TextureInfo;
-import team.chisel.ctm.client.texture.render.TextureNormal;
+import team.chisel.ctm.client.texture.TextureNormal;
 
 import javax.annotation.Nonnull;
 
-/**
- * Normal Block Render Type
- */
-public enum TextureTypeNormal implements ITextureType {
-
-    @TextureType("normal")
-    INSTANCE;
-
-    @Nonnull
-    private static final ITextureContext EMPTY_CONTEXT = () -> 0L;
+public class TextureTypeNormal implements TextureType {
+    public static final TextureTypeNormal INSTANCE = new TextureTypeNormal();
+    @NotNull
+    private static final TextureContext EMPTY_CONTEXT = () -> 0L;
 
     @Override
-    public ICTMTexture<TextureTypeNormal> makeTexture(TextureInfo info){
+    public CTMTexture<TextureTypeNormal> makeTexture(TextureInfo info) {
         return new TextureNormal(this, info);
     }
 
     @Override
-    public ITextureContext getBlockRenderContext(BlockState state, BlockStateView world, BlockPos pos, ICTMTexture<?> tex){
+    public TextureContext getTextureContext(BlockState state, BlockStateView world, BlockPos pos, CTMTexture<?> texture) {
         return EMPTY_CONTEXT;
     }
 
     @Override
-    public ITextureContext getContextFromData(long data){
+    public TextureContext deserializeContext(long data) {
         return EMPTY_CONTEXT;
     }
 }

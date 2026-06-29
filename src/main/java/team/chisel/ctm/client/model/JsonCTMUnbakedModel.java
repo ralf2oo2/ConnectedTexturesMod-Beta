@@ -17,7 +17,7 @@ import net.modificationstation.stationapi.api.client.texture.SpriteIdentifier;
 import net.modificationstation.stationapi.api.util.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
 import team.chisel.ctm.CTM;
-import team.chisel.ctm.api.texture.ICTMTexture;
+import team.chisel.ctm.api.texture.CTMTexture;
 import team.chisel.ctm.api.util.ResourceUtil;
 import team.chisel.ctm.client.resource.CTMMetadataReader;
 import team.chisel.ctm.client.resource.CTMMetadataSection;
@@ -105,7 +105,7 @@ public class JsonCTMUnbakedModel implements UnbakedModel {
 
         Set<SpriteIdentifier> textureSet = new HashSet<>(textureDependencies);
 
-        Map<Identifier, ICTMTexture<?>> textures = TextureUtil.initializeTextures(textureSet, textureGetter);
+        Map<Identifier, CTMTexture<?>> textures = TextureUtil.initializeTextures(textureSet, textureGetter);
 
         Int2ObjectMap<Sprite> spriteOverrides = new Int2ObjectArrayMap<>();
         for (Int2ObjectMap.Entry<SpriteIdentifier> entry : identifierOverrides.int2ObjectEntrySet()) {
@@ -119,7 +119,7 @@ public class JsonCTMUnbakedModel implements UnbakedModel {
             }
         }
 
-        Map<Pair<Integer, Identifier>, ICTMTexture<?>> textureOverrides = new HashMap<>();
+        Map<Pair<Integer, Identifier>, CTMTexture<?>> textureOverrides = new HashMap<>();
         for (Int2ObjectMap.Entry<CTMMetadataSection> entry : metadataOverrides.int2ObjectEntrySet()) {
             int tintIndex = entry.getIntKey();
             Sprite sprite = spriteOverrides.get(tintIndex);
@@ -137,28 +137,28 @@ public class JsonCTMUnbakedModel implements UnbakedModel {
     }
 
     private static class JsonCTMModelInfo implements CTMModelInfo {
-        private final List<ICTMTexture<?>> allTextures;
-        private final Map<Identifier, ICTMTexture<?>> textures;
+        private final List<CTMTexture<?>> allTextures;
+        private final Map<Identifier, CTMTexture<?>> textures;
         private final Int2ObjectMap<Sprite> spriteOverrides;
-        private final Map<Pair<Integer, Identifier>, ICTMTexture<?>> textureOverrides;
+        private final Map<Pair<Integer, Identifier>, CTMTexture<?>> textureOverrides;
 
-        private JsonCTMModelInfo(Map<Identifier, ICTMTexture<?>> textures, Int2ObjectMap<Sprite> spriteOverrides, Map<Pair<Integer, Identifier>, ICTMTexture<?>> textureOverrides) {
+        private JsonCTMModelInfo(Map<Identifier, CTMTexture<?>> textures, Int2ObjectMap<Sprite> spriteOverrides, Map<Pair<Integer, Identifier>, CTMTexture<?>> textureOverrides) {
             this.textures = textures;
             this.spriteOverrides = spriteOverrides;
             this.textureOverrides = textureOverrides;
-            allTextures = ImmutableList.<ICTMTexture<?>>builder()
+            allTextures = ImmutableList.<CTMTexture<?>>builder()
                                   .addAll(this.textures.values())
                                   .addAll(this.textureOverrides.values())
                                   .build();
         }
 
         @Override
-        public Collection<ICTMTexture<?>> getTextures() {
+        public Collection<CTMTexture<?>> getTextures() {
             return allTextures;
         }
 
         @Override
-        public ICTMTexture<?> getTexture(Identifier identifier) {
+        public CTMTexture<?> getTexture(Identifier identifier) {
             return textures.get(identifier);
         }
 
@@ -168,7 +168,7 @@ public class JsonCTMUnbakedModel implements UnbakedModel {
         }
 
         @Override
-        public @Nullable ICTMTexture<?> getOverrideTexture(int tintIndex, Identifier identifier) {
+        public @Nullable CTMTexture<?> getOverrideTexture(int tintIndex, Identifier identifier) {
             return textureOverrides.get(Pair.of(tintIndex, identifier));
         }
     }

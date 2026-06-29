@@ -4,50 +4,28 @@ import net.minecraft.util.math.BlockPos;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.util.math.StationBlockPos;
 import net.modificationstation.stationapi.api.world.BlockStateView;
-import team.chisel.ctm.api.texture.ICTMTexture;
-import team.chisel.ctm.api.texture.ITextureContext;
-import team.chisel.ctm.api.texture.ITextureType;
+import team.chisel.ctm.api.texture.CTMTexture;
+import team.chisel.ctm.api.texture.TextureContext;
+import team.chisel.ctm.api.texture.TextureType;
 import team.chisel.ctm.api.util.TextureInfo;
-import team.chisel.ctm.client.texture.ctx.TextureContextPosition;
-import team.chisel.ctm.client.texture.render.TextureEldritch;
+import team.chisel.ctm.client.texture.context.TextureContextEldritch;
+import team.chisel.ctm.client.texture.TextureEldritch;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
-public class TextureTypeEldritch implements ITextureType {
-
-    public static class Context extends TextureContextPosition {
-
-        private final BlockPos wrappedpos;
-
-        public Context(BlockPos pos) {
-            super(pos);
-            wrappedpos = new BlockPos(pos.getX() & 7, pos.getY() & 7, pos.getZ() & 7);
-        }
-
-        @Override
-        public BlockPos getPosition() {
-            return wrappedpos;
-        }
-
-        @Override
-        public long getCompressedData() {
-            return getPosition().asLong();
-        }
-    }
-
+public class TextureTypeEldritch implements TextureType {
     @Override
-    public ITextureContext getBlockRenderContext(BlockState state, BlockStateView world, BlockPos pos, ICTMTexture<?> tex) {
-        return new Context(pos);
-    }
-
-    @Override
-    public ITextureContext getContextFromData(long data) {
-        return new Context(StationBlockPos.fromLong(data));
-    }
-
-    @Override
-    public ICTMTexture<TextureTypeEldritch> makeTexture(TextureInfo info) {
+    public CTMTexture<TextureTypeEldritch> makeTexture(TextureInfo info) {
         return new TextureEldritch(this, info);
+    }
+
+    @Override
+    public TextureContext getTextureContext(BlockState state, BlockStateView world, BlockPos pos, CTMTexture<?> texture) {
+        return new TextureContextEldritch(pos);
+    }
+
+    @Override
+    public TextureContext deserializeContext(long data) {
+        return new TextureContextEldritch(StationBlockPos.fromLong(data));
     }
 }

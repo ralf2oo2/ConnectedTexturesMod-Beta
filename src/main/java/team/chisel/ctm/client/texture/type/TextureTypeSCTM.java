@@ -4,25 +4,25 @@ import net.minecraft.util.math.BlockPos;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.world.BlockStateView;
 import team.chisel.ctm.api.texture.CTMTexture;
+import team.chisel.ctm.api.texture.TextureType;
 import team.chisel.ctm.api.util.TextureInfo;
 import team.chisel.ctm.client.texture.AbstractConnectingTexture;
-import team.chisel.ctm.client.texture.TextureEdges;
+import team.chisel.ctm.client.texture.TextureSCTM;
 import team.chisel.ctm.client.texture.context.TextureContextConnecting;
-import team.chisel.ctm.client.texture.context.TextureContextEdges;
 
-public class TextureTypeEdges extends TextureTypeCTM {
+public class TextureTypeSCTM implements TextureType {
     @Override
-    public CTMTexture<? extends TextureTypeCTM> makeTexture(TextureInfo info) {
-        return new TextureEdges(this, info);
+    public CTMTexture<TextureTypeSCTM> makeTexture(TextureInfo info) {
+        return new TextureSCTM(this, info);
     }
 
     @Override
     public TextureContextConnecting getTextureContext(BlockState state, BlockStateView world, BlockPos pos, CTMTexture<?> texture) {
-        return new TextureContextEdges(state, world, pos, (AbstractConnectingTexture<?>) texture);
+        return new TextureContextConnecting(state, world, pos, (AbstractConnectingTexture<?>) texture);
     }
 
     @Override
     public int requiredTextures() {
-        return 3;
+        return 1;
     }
 }

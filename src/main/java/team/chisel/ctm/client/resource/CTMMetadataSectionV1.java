@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.modificationstation.stationapi.api.util.Identifier;
-import team.chisel.ctm.api.texture.ITextureType;
+import team.chisel.ctm.api.texture.TextureType;
 import team.chisel.ctm.client.texture.type.TextureTypeNormal;
 import team.chisel.ctm.registry.TextureTypeRegistry;
 import team.chisel.ctm.client.util.BlockRenderLayer;
@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.function.Function;
 
 public class CTMMetadataSectionV1 implements CTMMetadataSection {
-    private ITextureType type = TextureTypeNormal.INSTANCE;
+    private TextureType type = TextureTypeNormal.INSTANCE;
     private BlockRenderLayer layer = BlockRenderLayer.SOLID;
     private Identifier[] additionalTextures;
     private Identifier proxy;
@@ -45,7 +45,7 @@ public class CTMMetadataSectionV1 implements CTMMetadataSection {
         if (jsonObject.has("type")) {
             JsonElement typeElement = jsonObject.get("type");
             if (typeElement.isJsonPrimitive() && typeElement.getAsJsonPrimitive().isString()) {
-                ITextureType type = TextureTypeRegistry.getType(typeElement.getAsString());
+                TextureType type = TextureTypeRegistry.getType(typeElement.getAsString());
                 if (type == null) {
                     throw new JsonParseException("Invalid texture type provided: " + typeElement);
                 } else {
@@ -96,7 +96,7 @@ public class CTMMetadataSectionV1 implements CTMMetadataSection {
     }
 
     @Override
-    public ITextureType getType() {
+    public TextureType getType() {
         return type;
     }
 

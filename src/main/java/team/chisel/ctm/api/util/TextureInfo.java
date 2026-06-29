@@ -2,13 +2,14 @@ package team.chisel.ctm.api.util;
 
 import com.google.gson.JsonObject;
 import net.modificationstation.stationapi.api.client.texture.Sprite;
+import team.chisel.ctm.api.texture.CTMTexture;
 import team.chisel.ctm.client.util.BlockRenderLayer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
 /**
- * Bean to hold information that the IBlockRenderType should use to make an {@link team.chisel.ctm.api.texture.ICTMTexture}
+ * Bean to hold information that the IBlockRenderType should use to make an {@link CTMTexture}
  */
 @ParametersAreNonnullByDefault
 public class TextureInfo {
@@ -35,7 +36,7 @@ public class TextureInfo {
      * Gets a JsonObject that had the key "info" for extra texture information
      * This JsonObject might not exist
      */
-    public Optional<JsonObject> getInfo()
+    public Optional<JsonObject> getExtraInfo()
     {
         return this.info;
     }
