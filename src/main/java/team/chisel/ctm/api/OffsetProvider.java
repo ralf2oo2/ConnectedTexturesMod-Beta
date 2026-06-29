@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 
-public interface IOffsetProvider {
+public interface OffsetProvider {
 
     @NotNull
     BlockPos getOffset(@NotNull World world, @NotNull BlockPos pos);
