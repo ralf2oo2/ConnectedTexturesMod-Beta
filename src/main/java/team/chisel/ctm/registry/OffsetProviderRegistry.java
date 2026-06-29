@@ -5,11 +5,9 @@ import net.minecraft.world.World;
 import net.modificationstation.stationapi.api.util.math.Vec3i;
 import team.chisel.ctm.api.IOffsetProvider;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
-@ParametersAreNonnullByDefault
 public enum OffsetProviderRegistry {
 
     INSTANCE;

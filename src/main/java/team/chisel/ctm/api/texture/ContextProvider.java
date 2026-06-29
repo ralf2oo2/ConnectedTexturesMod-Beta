@@ -6,9 +6,7 @@ import net.modificationstation.stationapi.api.client.render.model.BakedQuad;
 import net.modificationstation.stationapi.api.util.math.Direction;
 import net.modificationstation.stationapi.api.world.BlockStateView;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
 public interface ContextProvider {
     /**
      * Creates the context for an upcoming mesh build. This context will then be passed to

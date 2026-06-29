@@ -10,8 +10,6 @@ import team.chisel.ctm.api.texture.TextureType;
 import team.chisel.ctm.api.util.TextureInfo;
 import team.chisel.ctm.client.texture.TextureNormal;
 
-import javax.annotation.Nonnull;
-
 public class TextureTypeNormal implements TextureType {
     public static final TextureTypeNormal INSTANCE = new TextureTypeNormal();
     @NotNull

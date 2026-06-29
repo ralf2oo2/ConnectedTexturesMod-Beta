@@ -4,11 +4,11 @@ import net.modificationstation.stationapi.api.client.resource.ReloadableAssetsMa
 import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.resource.Resource;
 import net.modificationstation.stationapi.api.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import team.chisel.ctm.CTM;
 import team.chisel.ctm.client.resource.CTMMetadataReader;
 import team.chisel.ctm.client.resource.CTMMetadataSection;
 
-import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;

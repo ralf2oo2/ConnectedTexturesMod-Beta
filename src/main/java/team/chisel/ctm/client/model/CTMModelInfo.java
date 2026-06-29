@@ -2,9 +2,9 @@ package team.chisel.ctm.client.model;
 
 import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import team.chisel.ctm.api.texture.CTMTexture;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 
 public interface CTMModelInfo {

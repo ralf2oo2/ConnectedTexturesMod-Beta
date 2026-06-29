@@ -11,8 +11,6 @@ import team.chisel.ctm.api.util.TextureInfo;
 import team.chisel.ctm.client.texture.context.TextureContextEldritch;
 import team.chisel.ctm.client.texture.TextureEldritch;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 public class TextureTypeEldritch implements TextureType {
     @Override
     public CTMTexture<TextureTypeEldritch> makeTexture(TextureInfo info) {

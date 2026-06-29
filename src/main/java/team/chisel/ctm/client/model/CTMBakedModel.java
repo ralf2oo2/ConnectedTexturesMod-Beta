@@ -11,13 +11,13 @@ import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.util.Identifier;
 import net.modificationstation.stationapi.api.util.math.Direction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import team.chisel.ctm.api.texture.CTMTexture;
 import team.chisel.ctm.api.texture.TextureContext;
 import team.chisel.ctm.client.state.CTMRenderContext;
 import team.chisel.ctm.client.util.BakedQuadRetextured;
 import team.chisel.ctm.mixin.BakedQuadAccessor;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

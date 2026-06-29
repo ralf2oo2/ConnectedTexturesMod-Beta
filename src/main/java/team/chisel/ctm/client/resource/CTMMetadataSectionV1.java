@@ -5,12 +5,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.modificationstation.stationapi.api.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import team.chisel.ctm.api.texture.TextureType;
 import team.chisel.ctm.client.texture.type.TextureTypeNormal;
 import team.chisel.ctm.registry.TextureTypeRegistry;
 import team.chisel.ctm.client.util.BlockRenderLayer;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Function;

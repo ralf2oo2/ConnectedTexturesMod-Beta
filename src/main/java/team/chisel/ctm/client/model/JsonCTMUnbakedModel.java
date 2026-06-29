@@ -16,6 +16,7 @@ import net.modificationstation.stationapi.api.client.texture.Sprite;
 import net.modificationstation.stationapi.api.client.texture.SpriteIdentifier;
 import net.modificationstation.stationapi.api.util.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 import team.chisel.ctm.CTM;
 import team.chisel.ctm.api.texture.CTMTexture;
 import team.chisel.ctm.api.util.ResourceUtil;
@@ -24,7 +25,6 @@ import team.chisel.ctm.client.resource.CTMMetadataSection;
 import team.chisel.ctm.client.util.TextureUtil;
 import team.chisel.ctm.client.util.VoidSet;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 

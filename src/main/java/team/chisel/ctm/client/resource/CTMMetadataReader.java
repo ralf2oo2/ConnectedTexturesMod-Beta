@@ -6,8 +6,8 @@ import com.google.gson.JsonParseException;
 import net.modificationstation.stationapi.api.resource.metadata.ResourceMetadataReader;
 import net.modificationstation.stationapi.api.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.Function;
 

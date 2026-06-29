@@ -3,10 +3,9 @@ package team.chisel.ctm.client.state;
 import net.minecraft.util.math.BlockPos;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.world.BlockStateView;
+import org.jetbrains.annotations.Nullable;
 import team.chisel.ctm.client.model.CTMModelInfo;
 import team.chisel.ctm.client.model.TextureContextMap;
-
-import javax.annotation.Nullable;
 
 public class CTMRenderContext {
     private static final ThreadLocal<CTMRenderContext> CURRENT = ThreadLocal.withInitial(() -> null);

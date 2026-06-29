@@ -5,13 +5,11 @@ import net.modificationstation.stationapi.api.client.texture.Sprite;
 import team.chisel.ctm.api.texture.CTMTexture;
 import team.chisel.ctm.client.util.BlockRenderLayer;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
 /**
  * Bean to hold information that the IBlockRenderType should use to make an {@link CTMTexture}
  */
-@ParametersAreNonnullByDefault
 public class TextureInfo {
     private Sprite[] sprites;
 
@@ -46,13 +44,5 @@ public class TextureInfo {
      */
     public BlockRenderLayer getRenderLayer(){
         return this.renderLayer;
-    }
-
-    /**
-     * Get whether this block should be rendered in fullbright
-     */
-    @Deprecated
-    public boolean getFullbright() {
-        return false;
     }
 }

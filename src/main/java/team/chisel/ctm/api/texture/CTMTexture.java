@@ -7,14 +7,12 @@ import net.modificationstation.stationapi.api.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 import team.chisel.ctm.client.util.BlockRenderLayer;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Represents a CTM Texture/resource
  */
-@ParametersAreNonnullByDefault
 public interface CTMTexture<T extends TextureType> {
 
     /**
