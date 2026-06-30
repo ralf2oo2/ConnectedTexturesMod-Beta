@@ -46,6 +46,16 @@ public class CTMBakedModel extends ForwardingBakedModel {
 
         for (Direction face : directions) {
             List<BakedQuad> parentQuads = this.wrapped.getQuads(blockState, face, rand);
+
+            if (parentQuads.isEmpty()) {
+                if (face != null) {
+                    cachedQuadsByFace.put(face, ImmutableList.of());
+                } else {
+                    nullFaceQuads = ImmutableList.of();
+                }
+                continue;
+            }
+
             List<BakedQuad> transformedQuads = new ArrayList<>();
             Map<BakedQuad, CTMTexture<?>> textureMap = new LinkedHashMap<>();
 
@@ -123,7 +133,12 @@ public class CTMBakedModel extends ForwardingBakedModel {
     @Override
     public ImmutableList<BakedQuad> getQuads(BlockState blockState, Direction face, Random rand) {
         if (blockState == null) {
-            return this.wrapped.getQuads(blockState, face, rand);
+            return this.wrapped.getQuads(null, face, rand);
+        }
+
+        List<BakedQuad> parentQuads = this.wrapped.getQuads(blockState, face, rand);
+        if (parentQuads.isEmpty()) {
+            return ImmutableList.of();
         }
 
         if (!this.cachedQuadsByFace.isEmpty() && face != null) {
