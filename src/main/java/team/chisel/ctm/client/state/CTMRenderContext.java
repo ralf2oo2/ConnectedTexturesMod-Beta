@@ -5,6 +5,7 @@ import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.util.math.MutableBlockPos;
 import net.modificationstation.stationapi.api.world.BlockStateView;
 import org.jetbrains.annotations.Nullable;
+import team.chisel.ctm.client.model.CTMBakedModel;
 import team.chisel.ctm.client.model.CTMModelInfo;
 import team.chisel.ctm.client.model.TextureContextMap;
 
@@ -16,6 +17,8 @@ public class CTMRenderContext {
     private boolean isFilled = false;
     private boolean isActive = false;
 
+    @Nullable public CTMBakedModel localizedModel = null;
+
     private CTMRenderContext() {}
 
     public static void set(BlockStateView world, BlockPos pos) {
@@ -25,6 +28,7 @@ public class CTMRenderContext {
         ctx.contextMap.reset();
         ctx.isFilled = false;
         ctx.isActive = true;
+        ctx.localizedModel = null;
     }
 
     public static void remove() {
@@ -32,6 +36,7 @@ public class CTMRenderContext {
         ctx.isActive = false;
         ctx.world = null;
         ctx.contextMap.reset();
+        ctx.localizedModel = null;
     }
 
     @Nullable
@@ -47,5 +52,16 @@ public class CTMRenderContext {
         }
 
         return ctx.contextMap;
+    }
+
+    @Nullable
+    public static CTMBakedModel getBakedModel() {
+        CTMRenderContext ctx = CURRENT.get();
+        return ctx.localizedModel;
+    }
+
+    public static void setBakedModel(CTMBakedModel bakedModel) {
+        CTMRenderContext ctx = CURRENT.get();
+        ctx.localizedModel = bakedModel;
     }
 }

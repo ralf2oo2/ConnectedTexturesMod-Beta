@@ -145,6 +145,11 @@ public class CTMBakedModel extends ForwardingBakedModel {
             return this.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
         }
 
+        CTMBakedModel bakedModel = CTMRenderContext.getBakedModel();
+        if(bakedModel != null) {
+            return face == null ? bakedModel.nullFaceQuads : bakedModel.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
+        }
+
         TextureContextMap contextMap = CTMRenderContext.getTextureContextMap(blockState, getModelInfo());
         if (contextMap == null) {
             return this.wrapped.getQuads(blockState, face, rand);
@@ -156,6 +161,8 @@ public class CTMBakedModel extends ForwardingBakedModel {
             CTMBakedModel processedModel = BLOCK_MESH_CACHE.get(key,
                     () -> new CTMBakedModel(this.wrapped, this.modelInfo, blockState, contextMap, rand)
             );
+
+            CTMRenderContext.setBakedModel(processedModel);
 
             return face == null ? processedModel.nullFaceQuads : processedModel.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
 
