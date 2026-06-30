@@ -20,7 +20,8 @@
       "team.chisel.ctm.CTM",
       "team.chisel.ctm.registry.TextureTypeRegistry",
       "team.chisel.ctm.init.ModelsAddedListener",
-      "team.chisel.ctm.init.ModelsLoadedListener"
+      "team.chisel.ctm.init.ModelsLoadedListener",
+      "team.chisel.ctm.init.DeserializeModelJsonListener"
     ],
     "stationapi:event_bus_server": [
     ],

@@ -41,7 +41,7 @@ public class UnbakedQuad implements Cloneable {
             vertex.decodeColor(data[offset+5]);
             vertex.u = MathUtil.getLerpProgress(Float.intBitsToFloat(data[offset+3]), sprite.getMinU(), sprite.getMaxU());
             vertex.v = MathUtil.getLerpProgress(Float.intBitsToFloat(data[offset+4]), sprite.getMinV(), sprite.getMaxV());
-//            vertex.decodeLight(data[offset+6]); too poor for light // TODO: check if this breaks rendering
+//            vertex.decodeLight(data[offset+6]); too poor for light //check if this breaks rendering, it does not
             vertex.skyLight = 15;
             vertex.blockLight = (bakedQuad.getEmission() > 0.0f) ? 15 : 0;
         }
@@ -391,7 +391,6 @@ public class UnbakedQuad implements Cloneable {
         return quad;
     }
 
-    // TODO: confirm this works
     public BakedQuad bake() {
         int[] vertexData = new int[32];
 

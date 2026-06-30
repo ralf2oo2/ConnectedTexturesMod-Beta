@@ -90,7 +90,6 @@ public class TextureMap extends AbstractTexture<TextureTypeMap> {
         TextureContext getContext(@NotNull BlockPos pos, @NotNull TextureMap texture);
     }
 
-    // TODO the enum fields are very similar
     public enum MapTypeImpl implements MapType {
         RANDOM {
             @Override
