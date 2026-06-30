@@ -26,6 +26,9 @@
     ],
     "gcapi3": [
       "team.chisel.ctm.config.Config"
+    ],
+    "gcapi3:presave": [
+      "team.chisel.ctm.config.CTMConfigListener"
     ]
   },
   "mixins": [
