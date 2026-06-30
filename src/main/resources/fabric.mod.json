@@ -4,15 +4,15 @@
   "version": "${version}",
 
   "name": "CTM",
-  "description": "Allows resource packs to add connected textures, emissive rendering, and much more.",
+  "description": "Allows resource packs to add connected textures and much more.",
   "authors": [
-    "tterrag", "Drullkus", "minecreatr", "Pepper_Bell", "Ralf2oo2"
+    "tterrag", "Drullkus", "minecreatr", "Team Chisel", "Pepper_Bell", "CodexAdrian", "Ralf2oo2"
   ],
 
   "license": "GPLv2",
   "icon": "assets/ctm/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "stationapi:event_bus": [
     ],
