@@ -136,7 +136,7 @@ public class CTMBakedModel extends ForwardingBakedModel {
         }
 
         try {
-            BlockMeshCacheKey key = new BlockMeshCacheKey(this.wrapped, blockState, contextMap.toDataArray());
+            BlockMeshCacheKey key = new BlockMeshCacheKey(this.wrapped, blockState, contextMap);
 
             CTMBakedModel processedModel = BLOCK_MESH_CACHE.get(key,
                     () -> new CTMBakedModel(this.wrapped, this.modelInfo, blockState, contextMap, rand)
@@ -152,29 +152,33 @@ public class CTMBakedModel extends ForwardingBakedModel {
     private static class BlockMeshCacheKey {
         private final BakedModel parent;
         private final BlockState blockState;
-        private final long[] data;
+        private final int contextDataHash;
+        private final int precomputedHash;
 
-        private BlockMeshCacheKey(BakedModel parent, BlockState blockState, long[] data) {
+        private BlockMeshCacheKey(BakedModel parent, BlockState blockState, TextureContextMap contextMap) {
             this.parent = parent;
             this.blockState = blockState;
-            this.data = data;
+            this.contextDataHash = contextMap.getElementsHashCode();
+
+            int hash = parent.hashCode();
+            hash = 31 * hash + blockState.hashCode();
+            hash = 31 * hash + this.contextDataHash;
+            this.precomputedHash = hash;
         }
 
         @Override
         public boolean equals(@Nullable Object obj) {
             if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            BlockMeshCacheKey other = (BlockMeshCacheKey) obj;
-            if (parent != other.parent) return false;
-            if (blockState != other.blockState) return false;
-            if (!Arrays.equals(data, other.data)) return false;
-            return true;
+            if (!(obj instanceof BlockMeshCacheKey other)) return false;
+
+            return this.parent == other.parent
+                           && this.blockState == other.blockState
+                           && this.contextDataHash == other.contextDataHash;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(parent, blockState, Arrays.hashCode(data));
+            return precomputedHash;
         }
     }
 }

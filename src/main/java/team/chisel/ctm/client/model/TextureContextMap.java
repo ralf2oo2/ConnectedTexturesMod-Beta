@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class TextureContextMap {
     private final Map<CTMTexture<?>, TextureContext> contextMap = new HashMap<>();
-    private final LongList dataList = new LongArrayList();
+    private final LongArrayList dataList = new LongArrayList();
 
     public void fill(Collection<CTMTexture<?>> textures, BlockState state, BlockStateView world, BlockPos pos) {
         for (CTMTexture<?> texture : textures) {
@@ -41,7 +41,19 @@ public class TextureContextMap {
         return contextMap.containsKey(texture);
     }
 
-    public long[] toDataArray() {
-        return dataList.toLongArray();
+//    public long[] toDataArray() {
+//        return dataList.toLongArray();
+//    }
+
+    public int getElementsHashCode() {
+        int hashCode = 1;
+        long[] elements = dataList.elements();
+        int size = dataList.size();
+        for (int i = 0; i < size; i++) {
+            long element = elements[i];
+            int elementHash = Long.hashCode(element);
+            hashCode = 31 * hashCode + elementHash;
+        }
+        return hashCode;
     }
 }
