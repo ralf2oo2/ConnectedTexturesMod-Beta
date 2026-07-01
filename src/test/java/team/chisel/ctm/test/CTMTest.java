@@ -32,6 +32,7 @@ public class CTMTest {
     public static Block testBlockEldritch;
     public static Block testBlockProxy;
     public static Block testBlockOverride;
+    public static Block testBlockOptifineFull;
 
     @EventListener
     public void registerBlocks(BlockRegistryEvent event) {
@@ -44,5 +45,6 @@ public class CTMTest {
         testBlockEldritch = new TemplateBlock(NAMESPACE.id("eldritch"), Material.WOOD);
         testBlockProxy = new TemplateBlock(NAMESPACE.id("proxy"), Material.WOOD);
         testBlockOverride = new TemplateBlock(NAMESPACE.id("override"), Material.WOOD);
+        testBlockOptifineFull = new TemplateBlock(NAMESPACE.id("optifine_full_ctm"), Material.WOOD);
     }
 }

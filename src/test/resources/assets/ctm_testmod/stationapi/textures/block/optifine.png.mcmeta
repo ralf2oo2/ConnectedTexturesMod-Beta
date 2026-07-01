@@ -1,0 +1,13 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "optifine_full",
+    "textures": [
+      "ctm_testmod:block/optifine_ctm_full"
+    ],
+    "extra": {
+      "ignore_states": true,
+      "connect_inside": true
+    }
+  }
+}
