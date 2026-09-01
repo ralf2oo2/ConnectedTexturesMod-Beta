@@ -45,5 +45,6 @@ public class CTM {
         event.register("ctm_simple", type);
         event.register("sctm", type);
         event.register("optifine_full", new TextureTypeOptifineFull());
+        event.register("ar", new TextureTypeAlterR());
     }
 }

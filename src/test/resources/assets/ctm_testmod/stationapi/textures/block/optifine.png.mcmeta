@@ -6,8 +6,7 @@
       "ctm_testmod:block/optifine_ctm_full"
     ],
     "extra": {
-      "ignore_states": true,
-      "connect_inside": true
+      "ignore_states": true
     }
   }
 }

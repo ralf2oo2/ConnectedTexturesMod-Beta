@@ -6,8 +6,7 @@
       "ctm_testmod:block/glass_ctm"
     ],
     "extra": {
-      "ignore_states": true,
-      "connect_inside": true
+      "ignore_states": true
     }
   }
 }
