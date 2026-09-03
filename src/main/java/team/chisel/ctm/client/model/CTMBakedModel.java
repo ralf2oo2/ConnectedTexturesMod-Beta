@@ -32,6 +32,8 @@ public class CTMBakedModel extends ForwardingBakedModel {
     private final Map<Direction, ImmutableList<BakedQuad>> cachedQuadsByFace = new EnumMap<>(Direction.class);
     private ImmutableList<BakedQuad> nullFaceQuads = ImmutableList.of();
 
+    private transient CTMBakedModel itemModel;
+
     public CTMBakedModel(@NotNull final BakedModel parent, @NotNull final CTMModelInfo modelInfo) {
         this.wrapped = Objects.requireNonNull(parent, "parent is marked non-null but is null");
         this.modelInfo = Objects.requireNonNull(modelInfo, "modelInfo is marked non-null but is null");
@@ -133,7 +135,10 @@ public class CTMBakedModel extends ForwardingBakedModel {
     @Override
     public ImmutableList<BakedQuad> getQuads(BlockState blockState, Direction face, Random rand) {
         if (blockState == null) {
-            return this.wrapped.getQuads(null, face, rand);
+            if (this.itemModel == null) {
+                this.itemModel = new CTMBakedModel(this.wrapped, this.modelInfo, null, null, rand);
+            }
+            return face == null ? this.itemModel.nullFaceQuads : this.itemModel.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
         }
 
         List<BakedQuad> parentQuads = this.wrapped.getQuads(blockState, face, rand);
