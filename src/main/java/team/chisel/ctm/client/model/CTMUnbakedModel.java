@@ -1,5 +1,6 @@
 package team.chisel.ctm.client.model;
 
+import com.mojang.datafixers.util.Pair;
 import net.modificationstation.stationapi.api.client.render.model.BakedModel;
 import net.modificationstation.stationapi.api.client.render.model.Baker;
 import net.modificationstation.stationapi.api.client.render.model.ModelBakeSettings;
@@ -36,5 +37,10 @@ public class CTMUnbakedModel implements UnbakedModel {
     @Override
     public @Nullable BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
         return null;
+    }
+
+    @Override
+    public Collection<SpriteIdentifier> getTextures(Function<Identifier, UnbakedModel> modelLoader, Set<Pair<String, String>> unresolvedTextureReferences) {
+        return parent.getTextures(modelLoader, unresolvedTextureReferences);
     }
 }

@@ -21,6 +21,7 @@ public class UnbakedQuad implements Cloneable {
     public int colorIndex;
     public Sprite sprite;
     public BlockRenderLayer layer;
+    public boolean emissive = false;
 
     public UnbakedQuad() {
     }
@@ -398,15 +399,18 @@ public class UnbakedQuad implements Cloneable {
             int offset = vertexId * 8;
             Vertex vertex = vertexes[vertexId];
 
+            // Position
             vertexData[offset]     = Float.floatToRawIntBits(vertex.x);
             vertexData[offset + 1] = Float.floatToRawIntBits(vertex.y);
             vertexData[offset + 2] = Float.floatToRawIntBits(vertex.z);
 
+            // UV
             float absoluteU = MathHelper.lerp(vertex.u, sprite.getMinU(), sprite.getMaxU());
             float absoluteV = MathHelper.lerp(vertex.v, sprite.getMinV(), sprite.getMaxV());
             vertexData[offset + 3] = Float.floatToRawIntBits(absoluteU);
             vertexData[offset + 4] = Float.floatToRawIntBits(absoluteV);
 
+            // Color
             int encodedColor = ((vertex.alpha & 0xFF) << 24) |
                                        ((vertex.red   & 0xFF) << 16) |
                                        ((vertex.green & 0xFF) << 8)  |
@@ -414,15 +418,14 @@ public class UnbakedQuad implements Cloneable {
             vertexData[offset + 5] = encodedColor;
 
             vertexData[offset + 6] = 0;
-
             vertexData[offset + 7] = 0;
         }
 
-        // Instantiating a new BakedQuad using StationAPI's constructor parameters.
-        // Ensure you pass whether it has diffuse shading (hasShade) based on your context requirements.
-        boolean hasShade = (vertexes[0].blockLight < 15);
+        float emission = vertexes[0].blockLight / 15.0F;
 
-        return new BakedQuad(vertexData, colorIndex, lightFace, sprite, hasShade);
+        boolean hasShade = vertexes[0].blockLight < 15;
+
+        return new BakedQuad(vertexData, colorIndex, lightFace, sprite, hasShade, emission);
     }
 
     public enum Winding {

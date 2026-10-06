@@ -31,6 +31,7 @@ public abstract class AbstractTexture<T extends TextureType> implements CTMTextu
     protected boolean hasLight;
     protected int skyLight;
     protected int blockLight;
+    protected boolean isEmissive;
 
     @Deprecated
     public AbstractTexture(T type, BlockRenderLayer layer, Sprite... sprites) {
@@ -44,7 +45,6 @@ public abstract class AbstractTexture<T extends TextureType> implements CTMTextu
         this.type = type;
         sprites = info.getSprites();
 
-        boolean isEmissive = false;
         if (info.getExtraInfo().isPresent()) {
             JsonElement light = info.getExtraInfo().get().get("light");
             if (light != null) {
@@ -58,7 +58,7 @@ public abstract class AbstractTexture<T extends TextureType> implements CTMTextu
                     blockLight = parseLightValue(lightObject.get("block"));
                 }
                 if (skyLight == 15 && blockLight == 15) {
-                    isEmissive = true;
+                    this.isEmissive = true;
                 }
             }
         }
@@ -94,6 +94,7 @@ public abstract class AbstractTexture<T extends TextureType> implements CTMTextu
         quad.layer = layer;
         if (hasLight) {
             quad.setLight(skyLight, blockLight);
+            quad.emissive = this.isEmissive;
         }
         return quad;
     }

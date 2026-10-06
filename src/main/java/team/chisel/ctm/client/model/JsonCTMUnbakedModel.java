@@ -136,6 +136,11 @@ public class JsonCTMUnbakedModel implements UnbakedModel {
         return new CTMBakedModel(parent.bake(baker, textureGetter, rotationContainer, modelId), new JsonCTMModelInfo(textures, spriteOverrides, textureOverrides));
     }
 
+    @Override
+    public Collection<SpriteIdentifier> getTextures(Function<Identifier, UnbakedModel> modelLoader, Set<com.mojang.datafixers.util.Pair<String, String>> unresolvedTextureReferences) {
+        return parent.getTextures(modelLoader, unresolvedTextureReferences);
+    }
+
     private static class JsonCTMModelInfo implements CTMModelInfo {
         private final List<CTMTexture<?>> allTextures;
         private final Map<Identifier, CTMTexture<?>> textures;
