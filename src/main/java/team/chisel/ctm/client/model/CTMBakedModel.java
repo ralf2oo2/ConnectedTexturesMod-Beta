@@ -3,6 +3,8 @@ package team.chisel.ctm.client.model;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.client.render.model.BakedModel;
 import net.modificationstation.stationapi.api.client.render.model.BakedQuad;
@@ -25,76 +27,58 @@ import java.util.concurrent.TimeUnit;
 public class CTMBakedModel extends ForwardingBakedModel {
     private static final Cache<BlockMeshCacheKey, CTMBakedModel> BLOCK_MESH_CACHE = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).maximumSize(5000).build();
 
+    protected ImmutableList<BakedQuad> quads;
+    protected ImmutableMap<Direction, ImmutableList<BakedQuad>> faceQuads;
+
+    private transient CTMBakedModel itemModel;
+
     @NotNull
     protected CTMModelInfo modelInfo;
     protected Sprite sprite;
 
-    private final Map<Direction, ImmutableList<BakedQuad>> cachedQuadsByFace = new EnumMap<>(Direction.class);
-    private ImmutableList<BakedQuad> nullFaceQuads = ImmutableList.of();
-
-    private transient CTMBakedModel itemModel;
-
     public CTMBakedModel(@NotNull final BakedModel parent, @NotNull final CTMModelInfo modelInfo) {
         this.wrapped = Objects.requireNonNull(parent, "parent is marked non-null but is null");
         this.modelInfo = Objects.requireNonNull(modelInfo, "modelInfo is marked non-null but is null");
-        sprite = initSprite();
+        this.sprite = initSprite();
     }
 
-    private CTMBakedModel(BakedModel parent, CTMModelInfo modelInfo, BlockState blockState, @Nullable TextureContextMap contextMap, Random rand) {
+    private CTMBakedModel(BakedModel parent, @NotNull CTMModelInfo modelInfo, BlockState blockState, @Nullable TextureContextMap contextMap, Random rand) {
         this(parent, modelInfo);
 
-        List<Direction> directions = new ArrayList<>(Arrays.asList(Direction.values()));
-        directions.add(null);
-
-        for (Direction face : directions) {
-            List<BakedQuad> parentQuads = this.wrapped.getQuads(blockState, face, rand);
-
-            if (parentQuads.isEmpty()) {
-                if (face != null) {
-                    cachedQuadsByFace.put(face, ImmutableList.of());
-                } else {
-                    nullFaceQuads = ImmutableList.of();
-                }
-                continue;
-            }
-
-            List<BakedQuad> transformedQuads = new ArrayList<>();
-            Map<BakedQuad, CTMTexture<?>> textureMap = new LinkedHashMap<>();
-
-            for (BakedQuad q : parentQuads) {
-                Identifier spriteId = ((BakedQuadAccessor) q).getSprite().getContents().getId();
-                CTMTexture<?> tex = modelInfo.getOverrideTexture(q.getColorIndex(), spriteId);
-                if (tex == null) {
-                    tex = modelInfo.getTexture(spriteId);
-                }
-
-                if (tex != null) {
-                    Sprite spriteReplacement = modelInfo.getOverrideSprite(q.getColorIndex());
-                    if (spriteReplacement != null) {
-                        q = new BakedQuadRetextured(q, spriteReplacement);
-                    }
-                    textureMap.put(q, tex);
-                } else {
-                    transformedQuads.add(q);
-                }
-            }
-
-
-            for (Map.Entry<BakedQuad, CTMTexture<?>> entry : textureMap.entrySet()) {
-                CTMTexture<?> texture = entry.getValue();
-                BakedQuad quad = entry.getKey();
-
-                TextureContext textureContext = contextMap == null ? null : contextMap.getContext(texture);
-
-                transformedQuads.addAll(texture.transformQuad(quad, face, textureContext));
-            }
-
-            if (face != null) {
-                cachedQuadsByFace.put(face, ImmutableList.copyOf(transformedQuads));
-            } else {
-                nullFaceQuads = ImmutableList.copyOf(transformedQuads);
-            }
+        ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
+        for(BakedQuad quad : parent.getQuads(blockState, null, rand)) {
+            quads.addAll(transformQuad(quad, null, contextMap));
         }
+        this.quads = quads.build();
+
+        Map<Direction, ImmutableList<BakedQuad>> faceQuads = new EnumMap<>(Direction.class);;
+        for(Direction direction : Direction.values()) {
+            ImmutableList.Builder<BakedQuad> faceQuadsBuilder = ImmutableList.builder();
+            for(BakedQuad quad : parent.getQuads(blockState, direction, rand)) {
+                faceQuadsBuilder.addAll(transformQuad(quad, direction, contextMap));
+            }
+            faceQuads.put(direction, faceQuadsBuilder.build());
+        }
+        this.faceQuads = Maps.immutableEnumMap(faceQuads);
+    }
+
+    private List<BakedQuad> transformQuad(BakedQuad quad, Direction direction, TextureContextMap contextMap) {
+        Identifier spriteId = ((BakedQuadAccessor) quad).getSprite().getContents().getId();
+        CTMTexture<?> tex = modelInfo.getOverrideTexture(quad.getColorIndex(), spriteId);
+
+        if(tex == null) {
+            tex = modelInfo.getTexture(spriteId);
+        }
+
+        if(tex != null) {
+            Sprite spriteReplacement = modelInfo.getOverrideSprite(quad.getColorIndex());
+            if(spriteReplacement != null) {
+                quad = new BakedQuadRetextured(quad, spriteReplacement);
+            }
+            TextureContext textureContext = contextMap == null ? null : contextMap.getContext(tex);
+            return tex.transformQuad(quad, direction, textureContext);
+        }
+        return List.of(quad);
     }
 
     public static void invalidateCaches() {
@@ -138,7 +122,7 @@ public class CTMBakedModel extends ForwardingBakedModel {
             if (this.itemModel == null) {
                 this.itemModel = new CTMBakedModel(this.wrapped, this.modelInfo, null, null, rand);
             }
-            return face == null ? this.itemModel.nullFaceQuads : this.itemModel.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
+            return face == null ? this.itemModel.quads : this.itemModel.faceQuads.getOrDefault(face, ImmutableList.of());
         }
 
         List<BakedQuad> parentQuads = this.wrapped.getQuads(blockState, face, rand);
@@ -146,13 +130,9 @@ public class CTMBakedModel extends ForwardingBakedModel {
             return ImmutableList.of();
         }
 
-        if (!this.cachedQuadsByFace.isEmpty() && face != null) {
-            return this.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
-        }
-
         CTMBakedModel bakedModel = CTMRenderContext.getBakedModel();
-        if(bakedModel != null) {
-            return face == null ? bakedModel.nullFaceQuads : bakedModel.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
+        if (bakedModel != null) {
+            return face == null ? bakedModel.quads : bakedModel.faceQuads.getOrDefault(face, ImmutableList.of());
         }
 
         TextureContextMap contextMap = CTMRenderContext.getTextureContextMap(blockState, getModelInfo());
@@ -169,7 +149,7 @@ public class CTMBakedModel extends ForwardingBakedModel {
 
             CTMRenderContext.setBakedModel(processedModel);
 
-            return face == null ? processedModel.nullFaceQuads : processedModel.cachedQuadsByFace.getOrDefault(face, ImmutableList.of());
+            return face == null ? processedModel.quads : processedModel.faceQuads.getOrDefault(face, ImmutableList.of());
 
         } catch (ExecutionException e) {
             return this.wrapped.getQuads(blockState, face, rand);

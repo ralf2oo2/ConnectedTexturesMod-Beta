@@ -1,0 +1,12 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "ctm",
+    "textures": [
+      "ctm_testmod:block/machine_ctm"
+    ],
+    "extra": {
+      "ignore_states": true
+    }
+  }
+}
