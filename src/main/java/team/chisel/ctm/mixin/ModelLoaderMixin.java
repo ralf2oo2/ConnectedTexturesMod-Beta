@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.chisel.ctm.event.ModelsAddedEvent;
+import team.chisel.ctm.event.CTMModelsAddedEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +33,6 @@ public class ModelLoaderMixin {
             at = @At("TAIL")
     )
     private void onFinishAddingModels(BlockColors blockColors, Profiler profiler, Map<Identifier, JsonUnbakedModel> jsonUnbakedModels, Map<Identifier, List<ModelLoader.SourceTrackedData>> blockStates, CallbackInfo ci) {
-        StationAPI.EVENT_BUS.post(ModelsAddedEvent.builder().modelLoader((ModelLoader) (Object) this).unbakedModels(unbakedModels).modelsToBake(modelsToBake).build());
+        StationAPI.EVENT_BUS.post(CTMModelsAddedEvent.builder().modelLoader((ModelLoader) (Object) this).unbakedModels(unbakedModels).modelsToBake(modelsToBake).build());
     }
 }

@@ -9,7 +9,7 @@ import net.modificationstation.stationapi.api.client.render.model.json.JsonUnbak
 import team.chisel.ctm.CTM;
 import team.chisel.ctm.client.resource.ModelParser;
 import team.chisel.ctm.client.resource.ModelParserV1;
-import team.chisel.ctm.event.DeserializeModelJsonEvent;
+import team.chisel.ctm.event.CTMDeserializeModelJsonEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class DeserializeModelJsonListener {
     public static final Map<JsonUnbakedModel, Int2ObjectMap<JsonElement>> jsonOverrideMap = new HashMap<>();
 
     @EventListener
-    public void onDeserializeModelJson(DeserializeModelJsonEvent event) {
+    public void onDeserializeModelJson(CTMDeserializeModelJsonEvent event) {
         if(event.jsonElement.isJsonObject()) {
             JsonObject jsonObject = event.jsonElement.getAsJsonObject();
             if (jsonObject.has("ctm_version")) {

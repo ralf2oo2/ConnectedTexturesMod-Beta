@@ -8,7 +8,7 @@ import net.modificationstation.stationapi.api.util.Namespace;
 import org.apache.logging.log4j.Logger;
 import team.chisel.ctm.api.texture.TextureType;
 import team.chisel.ctm.client.texture.type.*;
-import team.chisel.ctm.event.TextureTypeRegisterEvent;
+import team.chisel.ctm.event.CTMTextureTypeRegisterEvent;
 
 public class CTM {
     @Entrypoint.Namespace
@@ -19,12 +19,12 @@ public class CTM {
 
     @EventListener
     public void onInit(InitEvent event) {
-        StationAPI.EVENT_BUS.post(new TextureTypeRegisterEvent());
+        StationAPI.EVENT_BUS.post(new CTMTextureTypeRegisterEvent());
     }
 
 
     @EventListener
-    public void registerTextureTypes(TextureTypeRegisterEvent event) {
+    public void registerTextureTypes(CTMTextureTypeRegisterEvent event) {
         TextureType type;
         event.register("ctm", new TextureTypeCTM());
         event.register("edges", new TextureTypeEdges());

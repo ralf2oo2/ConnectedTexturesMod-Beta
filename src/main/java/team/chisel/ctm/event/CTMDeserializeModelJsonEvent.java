@@ -9,7 +9,7 @@ import net.modificationstation.stationapi.api.client.render.model.json.JsonUnbak
 import java.lang.reflect.Type;
 
 @SuperBuilder
-public class DeserializeModelJsonEvent extends Event {
+public class CTMDeserializeModelJsonEvent extends Event {
     public final JsonUnbakedModel jsonModel;
     public final JsonElement jsonElement;
     public final Type type;

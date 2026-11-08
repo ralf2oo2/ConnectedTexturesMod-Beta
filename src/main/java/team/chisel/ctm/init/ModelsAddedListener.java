@@ -10,8 +10,7 @@ import net.modificationstation.stationapi.api.client.render.model.UnbakedModel;
 import net.modificationstation.stationapi.api.client.render.model.json.JsonUnbakedModel;
 import net.modificationstation.stationapi.api.client.texture.SpriteIdentifier;
 import net.modificationstation.stationapi.api.util.Identifier;
-import team.chisel.ctm.event.DeserializeModelJsonEvent;
-import team.chisel.ctm.event.ModelsAddedEvent;
+import team.chisel.ctm.event.CTMModelsAddedEvent;
 import team.chisel.ctm.api.util.ResourceUtil;
 import team.chisel.ctm.client.model.JsonCTMUnbakedModel;
 import team.chisel.ctm.client.resource.CTMMetadataSection;
@@ -25,7 +24,7 @@ import java.util.function.Function;
 public class ModelsAddedListener {
 
     @EventListener
-    public void modelsAdded(ModelsAddedEvent event) {
+    public void modelsAdded(CTMModelsAddedEvent event) {
         Map<Identifier, UnbakedModel> wrappedModels = new HashMap<>();
 
         UnbakedModel missingModel = event.unbakedModels.get(ModelLoader.MISSING_ID);

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.chisel.ctm.event.ModelsLoadedEvent;
+import team.chisel.ctm.event.CTMModelsLoadedEvent;
 
 @Mixin(BakedModelManager.class)
 public class BakedModelManagerMixin{
@@ -17,6 +17,6 @@ public class BakedModelManagerMixin{
             at = @At("TAIL")
     )
     private void onUpload(@Coerce Object bakingResult, Profiler profiler, CallbackInfo ci) {
-        StationAPI.EVENT_BUS.post(new ModelsLoadedEvent());
+        StationAPI.EVENT_BUS.post(new CTMModelsLoadedEvent());
     }
 }
