@@ -6,7 +6,10 @@
       "ctm_testmod:block/machine_ctm"
     ],
     "extra": {
-      "ignore_states": true
+      "ignore_states": true,
+      "connect_to": [
+        { "tag":  "ctm_testmod:machines"}
+      ]
     }
   }
 }

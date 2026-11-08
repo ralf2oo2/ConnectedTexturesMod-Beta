@@ -2,8 +2,8 @@ package team.chisel.ctm.client.util;
 
 public enum BlockRenderLayer {
     SOLID("Solid", 0),
-    CUTOUT_MIPPED("Mipped Cutout", 1),
-    CUTOUT("Cutout", 1),
+    CUTOUT_MIPPED("Mipped Cutout", 0),
+    CUTOUT("Cutout", 0),
     TRANSLUCENT("Translucent", 1);
 
     private final String layerName;

@@ -4,8 +4,11 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import net.minecraft.block.Block;
 import net.modificationstation.stationapi.api.block.BlockState;
+import net.modificationstation.stationapi.api.block.context.BlockTagContext;
 import net.modificationstation.stationapi.api.registry.BlockRegistry;
+import net.modificationstation.stationapi.api.registry.RegistryEntryList;
 import net.modificationstation.stationapi.api.state.property.Property;
+import net.modificationstation.stationapi.api.tag.TagKey;
 import net.modificationstation.stationapi.api.util.Identifier;
 import net.modificationstation.stationapi.api.util.JsonHelper;
 import net.modificationstation.stationapi.api.util.math.Direction;
@@ -78,13 +81,15 @@ public class BlockStatePredicateParser {
     }
 
     private static final class PropertyPredicate<T extends Comparable<T>> implements Predicate<BlockState> {
-        private final Block block;
+        private final Predicate<BlockState> basePredicate;
+        private final Object target;
         private final Property<T> property;
         private final T value;
         private final ComparisonType type;
 
-        PropertyPredicate(final Block block, final Property<T> property, final T value, final ComparisonType type) {
-            this.block = block;
+        PropertyPredicate(final Predicate<BlockState> basePredicate, final Object target, final Property<T> property, final T value, final ComparisonType type) {
+            this.basePredicate = basePredicate;
+            this.target = target;
             this.property = property;
             this.value = value;
             this.type = type;
@@ -92,11 +97,13 @@ public class BlockStatePredicateParser {
 
         @Override
         public boolean test(BlockState state) {
-            return state.getBlock() == block && type.compareFunc.test(state.get(property).compareTo(value));
+            return basePredicate.test(state)
+                           && state.getProperties().contains(property)
+                           && type.compareFunc.test(state.get(property).compareTo(value));
         }
 
-        public Block getBlock() {
-            return block;
+        public Object getTarget() {
+            return target;
         }
 
         public Property<T> getProperty() {
@@ -116,9 +123,9 @@ public class BlockStatePredicateParser {
             if (o == this) return true;
             if (!(o instanceof BlockStatePredicateParser.PropertyPredicate)) return false;
             final BlockStatePredicateParser.PropertyPredicate<?> other = (BlockStatePredicateParser.PropertyPredicate<?>) o;
-            final Object this$block = getBlock();
-            final Object other$block = other.getBlock();
-            if (this$block == null ? other$block != null : !this$block.equals(other$block)) return false;
+            final Object this$target = getTarget();
+            final Object other$target = other.getTarget();
+            if (this$target == null ? other$target != null : !this$target.equals(other$target)) return false;
             final Object this$prop = getProperty();
             final Object other$prop = other.getProperty();
             if (this$prop == null ? other$prop != null : !this$prop.equals(other$prop)) return false;
@@ -135,8 +142,8 @@ public class BlockStatePredicateParser {
         public int hashCode() {
             final int PRIME = 59;
             int result = 1;
-            final Object $block = getBlock();
-            result = result * PRIME + ($block == null ? 43 : $block.hashCode());
+            final Object $target = getTarget();
+            result = result * PRIME + ($target == null ? 43 : $target.hashCode());
             final Object $prop = getProperty();
             result = result * PRIME + ($prop == null ? 43 : $prop.hashCode());
             final Object $value = getValue();
@@ -148,28 +155,32 @@ public class BlockStatePredicateParser {
 
         @Override
         public String toString() {
-            return "BlockStatePredicateParser.PropertyPredicate(block=" + getBlock() + ", property=" + getProperty() + ", value=" + getValue() + ", type=" + getType() + ")";
+            return "BlockStatePredicateParser.PropertyPredicate(target=" + getTarget() + ", property=" + getProperty() + ", value=" + getValue() + ", type=" + getType() + ")";
         }
     }
 
     private static final class MultiPropertyPredicate<T extends Comparable<T>> implements Predicate<BlockState> {
-        private final Block block;
+        private final Predicate<BlockState> basePredicate;
+        private final Object target;
         private final Property<T> property;
         private final Set<T> validValues;
 
-        MultiPropertyPredicate(final Block block, final Property<T> property, final Set<T> validValues) {
-            this.block = block;
+        MultiPropertyPredicate(final Predicate<BlockState> basePredicate, final Object target, final Property<T> property, final Set<T> validValues) {
+            this.basePredicate = basePredicate;
+            this.target = target;
             this.property = property;
             this.validValues = validValues;
         }
 
         @Override
         public boolean test(BlockState state) {
-            return state.getBlock() == block && validValues.contains(state.get(property));
+            return basePredicate.test(state)
+                           && state.getProperties().contains(property)
+                           && validValues.contains(state.get(property));
         }
 
-        public Block getBlock() {
-            return block;
+        public Object getTarget() {
+            return target;
         }
 
         public Property<T> getProperty() {
@@ -185,9 +196,9 @@ public class BlockStatePredicateParser {
             if (o == this) return true;
             if (!(o instanceof BlockStatePredicateParser.MultiPropertyPredicate)) return false;
             final BlockStatePredicateParser.MultiPropertyPredicate<?> other = (BlockStatePredicateParser.MultiPropertyPredicate<?>) o;
-            final Object this$block = getBlock();
-            final Object other$block = other.getBlock();
-            if (this$block == null ? other$block != null : !this$block.equals(other$block)) return false;
+            final Object this$target = getTarget();
+            final Object other$target = other.getTarget();
+            if (this$target == null ? other$target != null : !this$target.equals(other$target)) return false;
             final Object this$prop = getProperty();
             final Object other$prop = other.getProperty();
             if (this$prop == null ? other$prop != null : !this$prop.equals(other$prop)) return false;
@@ -201,8 +212,8 @@ public class BlockStatePredicateParser {
         public int hashCode() {
             final int PRIME = 59;
             int result = 1;
-            final Object $block = getBlock();
-            result = result * PRIME + ($block == null ? 43 : $block.hashCode());
+            final Object $target = getTarget();
+            result = result * PRIME + ($target == null ? 43 : $target.hashCode());
             final Object $prop = getProperty();
             result = result * PRIME + ($prop == null ? 43 : $prop.hashCode());
             final Object $validValues = getValidValues();
@@ -212,7 +223,7 @@ public class BlockStatePredicateParser {
 
         @Override
         public String toString() {
-            return "BlockStatePredicateParser.MultiPropertyPredicate(block=" + getBlock() + ", property=" + getProperty() + ", validValues=" + getValidValues() + ")";
+            return "BlockStatePredicateParser.MultiPropertyPredicate(target=" + getTarget() + ", property=" + getProperty() + ", validValues=" + getValidValues() + ")";
         }
     }
 
@@ -302,9 +313,35 @@ public class BlockStatePredicateParser {
         public Predicate<BlockState> deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if (jsonElement.isJsonObject()) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
-                Block block = BlockRegistry.INSTANCE.get(Identifier.of(JsonHelper.getString(jsonObject, "block")));
-                if (block == null) {
-                    return EMPTY;
+
+                boolean hasBlock = jsonObject.has("block");
+                boolean hasTag = jsonObject.has("tag");
+
+                if (hasBlock && hasTag) {
+                    throw new JsonSyntaxException("A predicate cannot specify both 'block' and 'tag'!");
+                }
+                if (!hasBlock && !hasTag) {
+                    throw new JsonSyntaxException("A predicate must specify either 'block' or 'tag'!");
+                }
+
+                Predicate<BlockState> basePredicate;
+                Object target;
+
+                if(hasBlock) {
+                    Block block = BlockRegistry.INSTANCE.get(Identifier.of(JsonHelper.getString(jsonObject, "block")));
+                    if (block == null) {
+                        return EMPTY;
+                    }
+                    target = block;
+                    basePredicate = state -> state.getBlock() == block;
+                } else {
+                    Identifier tagId = Identifier.of(JsonHelper.getString(jsonObject, "tag"));
+                    TagKey<Block> tag = TagKey.of(BlockRegistry.KEY, tagId);
+                    if (tag == null) {
+                        return EMPTY;
+                    }
+                    target = tag;
+                    basePredicate = state -> state.isIn(tag, BlockTagContext.DEFAULT);
                 }
                 Composition composition = null;
                 if (jsonObject.has("defer")) {
@@ -318,16 +355,16 @@ public class BlockStatePredicateParser {
                     }
                 }
                 if (!jsonObject.has("predicate")) {
-                    return compose(composition, new BlockPredicate(block));
+                    return compose(composition, basePredicate);
                 }
                 JsonElement propsElement = jsonObject.get("predicate");
                 if (propsElement.isJsonObject()) {
-                    return compose(composition, parsePredicate(block, propsElement.getAsJsonObject(), context));
+                    return compose(composition, parsePredicate(basePredicate, target, propsElement.getAsJsonObject(), context));
                 } else if (propsElement.isJsonArray()) {
                     List<Predicate<BlockState>> predicates = new ArrayList<>();
                     for (JsonElement ele : propsElement.getAsJsonArray()) {
                         if (ele.isJsonObject()) {
-                            predicates.add(parsePredicate(block, ele.getAsJsonObject(), context));
+                            predicates.add(parsePredicate(basePredicate, target, ele.getAsJsonObject(), context));
                         } else {
                             throw new JsonSyntaxException("Predicate entry must be a JSON Object. Found: " + ele);
                         }
@@ -355,23 +392,40 @@ public class BlockStatePredicateParser {
         }
 
         @SuppressWarnings({"rawtypes", "unchecked"})
-        private Predicate<BlockState> parsePredicate(@NotNull Block block, JsonObject jsonObject, JsonDeserializationContext context) {
+        private Predicate<BlockState> parsePredicate(@NotNull Predicate<BlockState> basePredicate, Object target, JsonObject jsonObject, JsonDeserializationContext context) {
             ComparisonType compareFunc = JsonHelper.deserialize(jsonObject, "compare_func", ComparisonType.EQUAL, context, ComparisonType.class);
             jsonObject.remove("compare_func");
             final Set<Map.Entry<String, JsonElement>> entryset = jsonObject.entrySet();
-            if (entryset.size() > 1 || entryset.size() == 0) {
+            if (entryset.size() != 1) {
                 throw new JsonSyntaxException("Predicate entry must define exactly one property->value pair. Found: " + entryset.size());
             }
             String key = entryset.iterator().next().getKey();
-            Optional<Property<?>> property = block.getStateManager().getProperties().stream().filter(p -> p.getName().equals(key)).findFirst();
-            if (!property.isPresent()) {
-                throw new JsonParseException(key + " is not a valid property for blockstate " + block.getDefaultState());
+
+
+            Optional<Property<?>> property = Optional.empty();
+            if (target instanceof Block) {
+                property = ((Block) target).getStateManager().getProperties().stream().filter(p -> p.getName().equals(key)).findFirst();
+            } else if (target instanceof TagKey) {
+                RegistryEntryList.Named<Block> entryList = BlockRegistry.INSTANCE.getOrCreateEntryList((TagKey<Block>) target);
+                for (var entry : entryList) {
+                    Block sampleBlock = entry.value();
+                    Optional<Property<?>> found = sampleBlock.getStateManager().getProperties().stream().filter(p -> p.getName().equals(key)).findFirst();
+                    if (found.isPresent()) {
+                        property = found;
+                        break;
+                    }
+                }
+            }
+
+            if (property.isEmpty()) {
+                throw new JsonParseException(key + " is not a valid property for blockstate " + target);
             }
             JsonElement valueElement = jsonObject.get(key);
+            final Property<?> prop = property.get();
             if (valueElement.isJsonArray()) {
-                return new MultiPropertyPredicate(block, property.get(), StreamSupport.stream(valueElement.getAsJsonArray().spliterator(), false).map(e -> parseValue(property.get(), e)).collect(Collectors.toSet()));
+                return new MultiPropertyPredicate(basePredicate, target, prop, StreamSupport.stream(valueElement.getAsJsonArray().spliterator(), false).map(e -> parseValue(prop, e)).collect(Collectors.toSet()));
             } else {
-                return new PropertyPredicate(block, property.get(), parseValue(property.get(), valueElement), compareFunc);
+                return new PropertyPredicate(basePredicate, target, prop, parseValue(prop, valueElement), compareFunc);
             }
         }
 
@@ -379,7 +433,7 @@ public class BlockStatePredicateParser {
         private Comparable parseValue(Property property, JsonElement jsonElement) {
             String valueString = JsonHelper.asString(jsonElement, property.getName());
             Optional<Comparable> value = (Optional<Comparable>) property.getValues().stream().filter(v -> property.name((Comparable) v).equalsIgnoreCase(valueString)).findFirst();
-            if (!value.isPresent()) {
+            if (value.isEmpty()) {
                 throw new JsonParseException(valueString + " is not a valid value for property " + property);
             }
             return value.get();

@@ -36,6 +36,7 @@ public class CTMTest {
     public static Block testBlockAr;
     public static Block testBlockBright;
     public static Block testBlockMachine;
+    public static Block testBlockMachine2;
 
     @EventListener
     public void registerBlocks(BlockRegistryEvent event) {
@@ -52,5 +53,6 @@ public class CTMTest {
         testBlockAr = new TemplateBlock(NAMESPACE.id("ctm_ar"), Material.WOOD);
         testBlockBright = new TemplateBlock(NAMESPACE.id("bright"), Material.WOOD);
         testBlockMachine = new TemplateBlock(NAMESPACE.id("machine"), Material.WOOD);
+        testBlockMachine2 = new TemplateBlock(NAMESPACE.id("machine2"), Material.WOOD);
     }
 }
