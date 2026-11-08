@@ -11,6 +11,7 @@
     "BakedModelManagerMixin",
     "BakedModelRendererMixin",
     "BakedQuadAccessor",
+    "ChunkBuilderMixin",
     "JsonUnbakedModelAccessor",
     "JsonUnbakedModelDeserializerMixin",
     "ModelLoaderMixin",

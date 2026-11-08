@@ -16,6 +16,7 @@ public class CTMRenderContext {
     public final TextureContextMap contextMap = new TextureContextMap();
     private boolean isFilled = false;
     private boolean isActive = false;
+    private int renderLayer = 0;
 
     @Nullable public CTMBakedModel localizedModel = null;
 
@@ -63,5 +64,15 @@ public class CTMRenderContext {
     public static void setBakedModel(CTMBakedModel bakedModel) {
         CTMRenderContext ctx = CURRENT.get();
         ctx.localizedModel = bakedModel;
+    }
+
+    public static int getRenderLayer() {
+        CTMRenderContext ctx = CURRENT.get();
+        return ctx.renderLayer;
+    }
+
+    public static void setRenderLayer(int renderLayer) {
+        CTMRenderContext ctx = CURRENT.get();
+        ctx.renderLayer = renderLayer;
     }
 }
